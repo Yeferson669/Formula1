@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="detalle-tiempo">
+    <h1>Detalle del Tiempo</h1>
+
+    {% if tiempo %}
+        <p><strong>Piloto:</strong> {{ tiempo.piloto.nombre if tiempo.piloto else "Desconocido" }}</p>
+        <p><strong>Circuito:</strong> {{ tiempo.circuito.nombre if tiempo.circuito else "Desconocido" }}</p>
+        <p><strong>Tiempo de vuelta:</strong> {{ tiempo.tiempo_vuelta }} seg</p>
+        {% if tiempo.posicion %}
+            <p><strong>Posición:</strong> {{ tiempo.posicion }}</p>
+        {% endif %}
+        {% if tiempo.fecha %}
+            <p><strong>Fecha:</strong> {{ tiempo.fecha }}</p>
+        {% endif %}
+    {% else %}
+        <p><em>{{ error }}</em></p>
+    {% endif %}
+
+    <br>
+    <a href="/tiempos/" class="back">⬅ Volver al listado de tiempos</a>
+</div>
+{% endblock %}

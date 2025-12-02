@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>👨‍✈️ Pilotos de Fórmula 1</h1>
+
+<div class="pilotos-container">
+    {% for piloto in pilotos %}
+        <div class="piloto-card">
+            <h2>{{ piloto.nombre }} (N° {{ piloto.numero }})</h2>
+            
+            {% if piloto.imagen_url %}
+                <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}" class="pilot-photo">
+            {% else %}
+                <p><em>Sin foto disponible</em></p>
+            {% endif %}
+            
+            <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
+            
+            {% if piloto.escuderia %}
+                <p><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
+            {% else %}
+                <p><strong>Escudería:</strong> <em>No asignada</em></p>
+            {% endif %}
+            
+            <a href="/pilotos/{{ piloto.id }}" class="btn">Ver detalles</a>
+        </div>
+    {% else %}
+        <p>No hay pilotos registrados.</p>
+    {% endfor %}
+</div>
+{% endblock %}

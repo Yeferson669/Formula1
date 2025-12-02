@@ -1,14 +1,20 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>{{ piloto }}</title>
-</head>
-<body>
-    <h1>{{ piloto }}</h1>
-    <p><strong>Escudería:</strong> {{ escuderia }}</p>
-    <p><strong>País:</strong> {{ pais }}</p>
-    <p><strong>Número:</strong> {{ numero }}</p>
-    <a href="/escuderia/{{ escuderia }}">⬅ Volver a pilotos</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Listado de Pilotos</h1>
+
+<div class="pilotos-container">
+    {% for piloto in pilotos %}
+    <div class="piloto-card">
+        <h2>{{ piloto.nombre }} (N° {{ piloto.numero }})</h2>
+        <p><strong>País:</strong> {{ piloto.pais }}</p>
+        <a href="/pilotos/{{ piloto.id }}">Ver detalles</a>
+    </div>
+    {% else %}
+    <p>No hay pilotos registrados.</p>
+    {% endfor %}
+</div>
+
+<br>
+<a href="/" class="btn-back">⬅ Volver al inicio</a>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="detalle-circuito">
+    <h1>Circuito: {{ circuito.nombre }}</h1>
+
+    {% if circuito.imagen_url %}
+        <img src="/{{ circuito.imagen_url }}" alt="Imagen de {{ circuito.nombre }}" class="circuito-photo-large">
+    {% else %}
+        <p><em>Sin imagen disponible</em></p>
+    {% endif %}
+
+    <p><strong>País:</strong> {{ circuito.pais }}</p>
+    {% if circuito.longitud_km %}
+        <p><strong>Longitud:</strong> {{ circuito.longitud_km }} km</p>
+    {% endif %}
+
+    <br>
+    <a href="/circuitos/" class="back">⬅ Volver al listado de circuitos</a>
+</div>
+{% endblock %}

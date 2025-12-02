@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="detalle-piloto">
+    <h1>Piloto: {{ piloto.nombre }}</h1>
+
+    {% if piloto.imagen_url %}
+        <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}" class="pilot-photo-large">
+    {% else %}
+        <p><em>Sin foto disponible</em></p>
+    {% endif %}
+
+    <p><strong>Número:</strong> {{ piloto.numero }}</p>
+    <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
+
+    {% if piloto.escuderia %}
+        <p><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
+    {% else %}
+        <p><strong>Escudería:</strong> <em>No asignada</em></p>
+    {% endif %}
+
+    {% if piloto.fecha_nacimiento %}
+        <p><strong>Fecha de nacimiento:</strong> {{ piloto.fecha_nacimiento.strftime('%d/%m/%Y') }}</p>
+    {% endif %}
+
+    {% if piloto.biografia %}
+        <p><strong>Biografía:</strong> {{ piloto.biografia }}</p>
+    {% endif %}
+
+    {% if piloto.twitter %}
+        <p><strong>Twitter:</strong> 
+            <a href="https://twitter.com/{{ piloto.twitter | replace('@','') }}" target="_blank">
+                {{ piloto.twitter }}
+            </a>
+        </p>
+    {% endif %}
+
+    <br>
+    {% if piloto.escuderia %}
+        <a href="/teams/team/{{ piloto.escuderia.nombre }}" class="back">⬅ Volver al equipo</a>
+    {% else %}
+        <a href="/pilotos/" class="back">⬅ Volver al listado de pilotos</a>
+    {% endif %}
+</div>
+{% endblock %}

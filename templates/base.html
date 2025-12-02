@@ -21,6 +21,43 @@
             font-size: 1.8em;
             font-weight: bold;
         }
+        nav {
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 10px;
+            flex-wrap: wrap;
+        }
+        nav a {
+            color: #f2f2f2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        nav a:hover {
+            color: #e10600;
+        }
+        nav form {
+            display: inline-flex;
+            gap: 5px;
+        }
+        nav input[type="text"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        nav button {
+            background-color: #e10600;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        nav button:hover {
+            background-color: #b00500;
+        }
         main {
             padding: 30px;
             max-width: 900px;
@@ -60,12 +97,33 @@
     🏎️ Fórmula 1 - Proyecto
 </header>
 
+<nav>
+    <a href="/">Inicio</a>
+    <a href="/escuderias">Escuderías</a>
+    <a href="/pilotos">Pilotos</a>
+    <a href="/circuitos">Circuitos</a>
+    <a href="/tiempos">Tiempos</a>
+    <a href="/dashboard">Dashboard</a>
+
+    <!-- 🔎 Buscador de pilotos -->
+    <form action="/pilotos/buscar/" method="get">
+        <input type="text" name="nombre" placeholder="Buscar piloto...">
+        <button type="submit">🔍</button>
+    </form>
+
+    <!-- 🔎 Buscador de escuderías -->
+    <form action="/escuderias/buscar/" method="get">
+        <input type="text" name="nombre" placeholder="Buscar escudería...">
+        <button type="submit">🔍</button>
+    </form>
+</nav>
+
 <main>
     {% block content %}{% endblock %}
 </main>
 
 <footer>
-    © {{ 2025 }} Proyecto FastAPI - Fórmula 1
+    © {{ current_year }} Proyecto FastAPI - Fórmula 1
 </footer>
 
 </body>

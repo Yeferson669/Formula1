@@ -1,55 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ driver_name }} - Información del Piloto</title>
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            color: white;
-            text-align: center;
-        }
-        .container {
-            margin-top: 40px;
-        }
-        img {
-            border-radius: 10px;
-            width: 250px;
-            height: auto;
-            box-shadow: 0 0 10px red;
-        }
-        h1 {
-            color: #ff0000;
-        }
-        .info {
-            margin-top: 20px;
-            background-color: #222;
-            display: inline-block;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: left;
-        }
-        a {
-            color: #ff5555;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>{{ driver_name }}</h1>
-        <img src="{{ info['imagen'] }}" alt="{{ driver_name }}">
-        <div class="info">
-            <p><strong>Número:</strong> {{ info['numero'] }}</p>
-            <p><strong>País:</strong> {{ info['pais'] }}</p>
-            <p><strong>Edad:</strong> {{ info['edad'] }}</p>
-            <p><strong>Equipo:</strong> {{ info['equipo'] }}</p>
-            <p><strong>Victorias:</strong> {{ info['victorias'] }}</p>
-        </div>
-        <br>
-        <a href="/">← Volver a Escuderías</a>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ piloto.nombre }}</h1>
+
+    {% if piloto.imagen %}
+        <img src="{{ piloto.imagen }}" alt="Foto de {{ piloto.nombre }}" width="200">
+    {% endif %}
+
+    <div class="info">
+        <p><strong>Número:</strong> {{ piloto.numero }}</p>
+        <p><strong>País:</strong> {{ piloto.pais }}</p>
+        <p><strong>Edad:</strong> {{ piloto.edad }}</p>
+        <p><strong>Equipo:</strong> {{ piloto.escuderia.nombre }}</p>
+        <p><strong>Victorias:</strong> {{ piloto.victorias }}</p>
+
+        {% if piloto.escuderia.logo_url %}
+            <p><strong>Logo Escudería:</strong><br>
+            <img src="{{ piloto.escuderia.logo_url }}" alt="Logo {{ piloto.escuderia.nombre }}" width="120"></p>
+        {% endif %}
     </div>
-</body>
-</html>
+
+    <!-- 🔎 Buscador de pilotos desde la vista de detalle -->
+    <form action="/pilotos/buscar/" method="get" style="margin-top: 20px;">
+        <input type="text" name="nombre" 
+               placeholder="Buscar otro piloto..." 
+               required minlength="3" maxlength="50">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <br>
+    <a href="/pilotos">← Volver al listado de pilotos</a>
+</div>
+{% endblock %}

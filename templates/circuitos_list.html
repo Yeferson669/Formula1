@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>🛣️ Circuitos de Fórmula 1</h1>
+
+<div class="circuitos-container">
+    {% for c in circuitos %}
+        <div class="circuito-card">
+            <h2>{{ c.nombre }}</h2>
+            
+            {% if c.imagen_url %}
+                <img src="/{{ c.imagen_url }}" alt="Imagen de {{ c.nombre }}" class="circuito-photo">
+            {% else %}
+                <p><em>Sin imagen disponible</em></p>
+            {% endif %}
+            
+            <p><strong>País:</strong> {{ c.pais }}</p>
+            {% if c.longitud_km %}
+                <p><strong>Longitud:</strong> {{ c.longitud_km }} km</p>
+            {% endif %}
+            
+            <a href="/circuitos/{{ c.id }}" class="btn">Ver detalles</a>
+        </div>
+    {% else %}
+        <p>No hay circuitos registrados.</p>
+    {% endfor %}
+</div>
+{% endblock %}

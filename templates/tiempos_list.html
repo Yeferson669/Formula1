@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>⏱️ Tiempos registrados</h1>
+
+<div class="tiempos-container">
+    {% for t in tiempos %}
+        <div class="tiempo-card">
+            <p><strong>Piloto:</strong> {{ t.piloto.nombre if t.piloto else "Desconocido" }}</p>
+            <p><strong>Circuito:</strong> {{ t.circuito.nombre if t.circuito else "Desconocido" }}</p>
+            <p><strong>Tiempo de vuelta:</strong> {{ t.tiempo_vuelta }} seg</p>
+            {% if t.posicion %}
+                <p><strong>Posición:</strong> {{ t.posicion }}</p>
+            {% endif %}
+            {% if t.fecha %}
+                <p><strong>Fecha:</strong> {{ t.fecha }}</p>
+            {% endif %}
+            <a href="/tiempos/{{ t.id }}" class="btn">Ver detalle</a>
+        </div>
+    {% else %}
+        <p>No hay tiempos registrados.</p>
+    {% endfor %}
+</div>
+{% endblock %}

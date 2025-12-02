@@ -1,16 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>{{ escuderia }} - Pilotos</title>
-</head>
-<body>
-    <h1>Pilotos de {{ escuderia }}</h1>
-    <ul>
-        {% for piloto in pilotos %}
-        <li><a href="/piloto/{{ piloto }}">{{ piloto }}</a></li>
-        {% endfor %}
-    </ul>
-    <a href="/">⬅ Volver a escuderías</a>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Escudería: {{ escuderia.nombre }}</h1>
+
+<div class="escuderia-card">
+    {% if escuderia.logo_url %}
+        <img src="{{ escuderia.logo_url }}" alt="Logo de {{ escuderia.nombre }}" width="150">
+    {% endif %}
+    <p><strong>País:</strong> {{ escuderia.pais }}</p>
+</div>
+
+<h2>Pilotos</h2>
+
+<!-- 🔎 Buscador de pilotos dentro de la escudería -->
+<form action="/pilotos/buscar/" method="get" style="margin-bottom: 20px;">
+    <input type="text" name="nombre" 
+           placeholder="Buscar piloto en esta escudería..." 
+           required minlength="3" maxlength="50">
+    <button type="submit">Buscar</button>
+</form>
+
+<ul>
+    {% for piloto in pilotos %}
+        <li>
+            <a href="/pilotos/{{ piloto.id }}">
+                {{ piloto.nombre }} (N° {{ piloto.numero }}) - {{ piloto.pais }}
+            </a>
+        </li>
+    {% else %}
+        <li>No hay pilotos registrados en esta escudería.</li>
+    {% endfor %}
+</ul>
+
+<br>
+<a href="/escuderias">⬅ Volver al listado de escuderías</a>
+{% endblock %}

@@ -1,15 +1,17 @@
 from __future__ import annotations
-from pydantic import BaseModel
+from pydantic import BaseModel, confloat, conint, constr
 from typing import List, Optional
 from datetime import date
 
-
+# -----------------------------
+# Circuito
+# -----------------------------
 class CircuitoBase(BaseModel):
-    nombre: str
-    pais: Optional[str] = None
-    longitud_km: Optional[int] = None
+    nombre: constr(min_length=3, max_length=50)
+    pais: Optional[constr(min_length=2, max_length=50)] = None
+    longitud_km: Optional[conint(gt=0, lt=10_000)] = None  # km positivos y razonables
     activo: bool = True
-
+    imagen_url: Optional[str] = None
 
 class Circuito(CircuitoBase):
     id: int
@@ -17,46 +19,37 @@ class Circuito(CircuitoBase):
     class Config:
         orm_mode = True
 
-
-
-class PerfilPilotoBase(BaseModel):
-    fecha_nacimiento: Optional[date] = None
-    biografia: Optional[str] = None
-    twitter: Optional[str] = None
-
-
-class PerfilPiloto(PerfilPilotoBase):
-    id: int
-    piloto_id: int
-
-    class Config:
-        orm_mode = True
-
-
-
+# -----------------------------
+# Piloto
+# -----------------------------
 class PilotoBase(BaseModel):
-    nombre: str
-    nacionalidad: str
-    numero: int
+    nombre: constr(min_length=3, max_length=50)
+    nacionalidad: constr(min_length=2, max_length=50)
+    numero: conint(ge=1, le=99)  # número entre 1 y 99
     activo: bool = True
     escuderia_id: Optional[int] = None
 
+    # 🔹 Campos que antes estaban en PerfilPiloto
+    fecha_nacimiento: Optional[date] = None
+    biografia: Optional[constr(min_length=10, max_length=500)] = None
+    twitter: Optional[constr(min_length=3, max_length=50)] = None
+    imagen_url: Optional[str] = None
 
 class Piloto(PilotoBase):
     id: int
-    perfil: Optional[PerfilPiloto] = None
     circuitos: List[Circuito] = []
 
     class Config:
         orm_mode = True
 
-
-
+# -----------------------------
+# Escudería
+# -----------------------------
 class EscuderiaBase(BaseModel):
-    nombre: str
-    pais: str
+    nombre: constr(min_length=3, max_length=50)
+    pais: constr(min_length=2, max_length=50)
     activo: bool = True
-
+    logo_url: Optional[str] = None
 
 class Escuderia(EscuderiaBase):
     id: int
@@ -65,15 +58,15 @@ class Escuderia(EscuderiaBase):
     class Config:
         orm_mode = True
 
-
-
+# -----------------------------
+# Tiempo
+# -----------------------------
 class TiempoBase(BaseModel):
     piloto_id: int
     circuito_id: int
-    tiempo_vuelta: float
-    posicion: Optional[int] = None
+    tiempo_vuelta: confloat(gt=0)  # tiempo positivo
+    posicion: Optional[conint(ge=1)] = None
     fecha: Optional[date] = None
-
 
 class Tiempo(TiempoBase):
     id: int

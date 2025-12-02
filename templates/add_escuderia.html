@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Registrar Escudería</h1>
+
+<form action="/escuderias/add" method="post" enctype="multipart/form-data">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" 
+           required minlength="3" maxlength="50"><br>
+
+    <label for="pais">País:</label>
+    <input type="text" id="pais" name="pais" 
+           required minlength="2" maxlength="50"><br>
+
+    <label for="logo">Logo:</label>
+    <input type="file" id="logo" name="logo" 
+           accept="image/*" required><br>
+
+    <button type="submit">Registrar</button>
+</form>
+
+<br>
+<a href="/escuderias">⬅ Volver al listado de escuderías</a>
+{% endblock %}

@@ -1,23 +1,33 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ team_name }} - Pilotos</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <h1>Escudería: {{ team_name }}</h1>
+{% extends "base.html" %}
 
-    <div class="pilotos-container">
-        {% for piloto in pilotos %}
+{% block content %}
+<h1>Equipo: {{ team.nombre }}</h1>
+
+{% if team.logo_url %}
+    <img src="/{{ team.logo_url }}" alt="Logo de {{ team.nombre }}" class="team-logo-large">
+{% else %}
+    <p><em>Sin logo disponible</em></p>
+{% endif %}
+
+<p><strong>País:</strong> {{ team.pais if team.pais else "No especificado" }}</p>
+
+<div class="pilotos-container">
+    {% for piloto in pilotos %}
         <div class="piloto-card">
-            <h2>{{ piloto }}</h2>
-            <a href="/driver/{{ piloto }}">Ver detalles</a>
+            <h2>{{ piloto.nombre }} (N° {{ piloto.numero }})</h2>
+            
+            {% if piloto.imagen_url %}
+                <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}" class="pilot-photo">
+            {% endif %}
+            
+            <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
+            <a href="/pilotos/{{ piloto.id }}" class="btn">Ver detalles</a>
         </div>
-        {% endfor %}
-    </div>
+    {% else %}
+        <p>No hay pilotos registrados en este equipo.</p>
+    {% endfor %}
+</div>
 
-    <br>
-    <a href="/">⬅ Volver al inicio</a>
-</body>
-</html>
+<br>
+<a href="/teams/" class="back">⬅ Volver al listado de equipos</a>
+{% endblock %}

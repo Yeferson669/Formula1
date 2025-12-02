@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>📊 Dashboard de Fórmula 1</h1>
+
+<!-- Pilotos por escudería -->
+<section>
+    <h2>Pilotos por escudería</h2>
+    <div class="chart-container">
+        <canvas id="pilotosPorEscuderia"></canvas>
+    </div>
+</section>
+
+<!-- Tiempos promedio por circuito -->
+<section>
+    <h2>Tiempos promedio por circuito</h2>
+    <div class="chart-container">
+        <canvas id="tiemposPorCircuito"></canvas>
+    </div>
+</section>
+
+<!-- Pilotos por nacionalidad -->
+<section>
+    <h2>Pilotos por nacionalidad</h2>
+    <div class="chart-container">
+        <canvas id="pilotosPorNacionalidad"></canvas>
+    </div>
+</section>
+
+<!-- Escuderías activas vs eliminadas -->
+<section>
+    <h2>Estado de escuderías</h2>
+    <div class="chart-container">
+        <canvas id="escuderiasStatus"></canvas>
+    </div>
+</section>
+
+<!-- Longitud de circuitos -->
+<section>
+    <h2>Longitudes de circuitos</h2>
+    <div class="chart-container">
+        <canvas id="longitudesCircuitos"></canvas>
+    </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Datos desde FastAPI
+    const escuderias = {{ escuderias | safe }};
+    const pilotos_count = {{ pilotos_count | safe }};
+    const circuitos = {{ circuitos | safe }};
+    const tiempos_promedio = {{ tiempos_promedio | safe }};
+    const nacionalidades_labels = {{ nacionalidades_labels | safe }};
+    const nacionalidades_data = {{ nacionalidades_data | safe }};
+    const escuderias_status_labels = {{ escuderias_status_labels | safe }};
+    const escuderias_status_data = {{ escuderias_status_data | safe }};
+    const longitudes = {{ longitudes | safe }};
+
+    // Pilotos por escudería
+    new Chart(document.getElementById('pilotosPorEscuderia'), {
+        type: 'bar',
+        data: {
+            labels: escuderias,
+            datasets: [{
+                label: 'Número de pilotos',
+                data: pilotos_count,
+                backgroundColor: 'rgba(225,6,0,0.7)'
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } } }
+    });
+
+    // Tiempos promedio por circuito
+    new Chart(document.getElementById('tiemposPorCircuito'), {
+        type: 'line',
+        data: {
+            labels: circuitos,
+            datasets: [{
+                label: 'Tiempo Promedio (segundos)',
+                data: tiempos_promedio,
+                borderColor: '#00ffcc',
+                backgroundColor: 'rgba(0,255,204,0.2)',
+                fill: true
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Pilotos por nacionalidad
+    new Chart(document.getElementById('pilotosPorNacionalidad'), {
+        type: 'pie',
+        data: {
+            labels: nacionalidades_labels,
+            datasets: [{
+                data: nacionalidades_data,
+                backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF']
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Escuderías activas vs eliminadas
+    new Chart(document.getElementById('escuderiasStatus'), {
+        type: 'doughnut',
+        data: {
+            labels: escuderias_status_labels,
+            datasets: [{
+                data: escuderias_status_data,
+                backgroundColor: ['#2ecc71','#e74c3c']
+            }]
+        },
+        options: { responsive: true }
+    });
+
+    // Longitud de circuitos
+    new Chart(document.getElementById('longitudesCircuitos'), {
+        type: 'bar',
+        data: {
+            labels: circuitos,
+            datasets: [{
+                label: 'Longitud (km)',
+                data: longitudes,
+                backgroundColor: '#3498db'
+            }]
+        },
+        options: { responsive: true }
+    });
+</script>
+{% endblock %}

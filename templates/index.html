@@ -1,19 +1,37 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Fórmula 1 - Escuderías</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <h1>🏎️ Escuderías de Fórmula 1</h1>
-    <div class="container">
-        {% for team_name, team_data in teams.items() %}
-            <div class="card">
-                <h2>{{ team_name }}</h2>
-                <a href="/team/{{ team_name }}">Ver pilotos</a>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>🏎️ Escuderías de Fórmula 1</h1>
+
+<!-- ✅ Solo dejamos este formulario -->
+<form action="/escuderias/buscar" method="get" class="search-form">
+    <input type="text" name="nombre" placeholder="Buscar escudería..." value="{{ busqueda if busqueda else '' }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<div class="escuderias-container">
+    {% if escuderias and escuderias|length > 0 %}
+        {% for e in escuderias %}
+            <div class="escuderia-card">
+                <h2>{{ e.nombre }}</h2>
+                
+                {% if e.logo_url %}
+                    <img src="/{{ e.logo_url }}" alt="Logo de {{ e.nombre }}" class="team-logo">
+                {% else %}
+                    <p><em>Sin logo disponible</em></p>
+                {% endif %}
+                
+                <p><strong>País:</strong> {{ e.pais if e.pais else "No especificado" }}</p>
+                
+                <a href="/escuderias/{{ e.id }}" class="btn">Ver pilotos</a>
             </div>
         {% endfor %}
-    </div>
-</body>
-</html>
+    {% else %}
+        {% if busqueda %}
+            <p>No se encontraron resultados para "<strong>{{ busqueda }}</strong>".</p>
+        {% else %}
+            <p>No hay escuderías registradas.</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

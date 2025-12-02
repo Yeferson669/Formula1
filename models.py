@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Float
 from sqlalchemy.orm import relationship
 from database import Base
 
+# Tabla intermedia para relación muchos a muchos entre pilotos y circuitos
 piloto_circuito = Table(
     "piloto_circuito",
     Base.metadata,
@@ -10,16 +11,15 @@ piloto_circuito = Table(
 )
 
 
-
 class Escuderia(Base):
     __tablename__ = "escuderias"
 
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, unique=True, index=True)
-    pais = Column(String)
+    nombre = Column(String(50), unique=True, index=True, nullable=False)
+    pais = Column(String(50), nullable=False)
     activo = Column(Boolean, default=True)
+    logo_url = Column(String(255), nullable=True)
 
-    
     pilotos = relationship("Piloto", back_populates="escuderia")
 
 
@@ -27,38 +27,34 @@ class Piloto(Base):
     __tablename__ = "pilotos"
 
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, index=True)
-    nacionalidad = Column(String)
-    numero = Column(Integer)
+    nombre = Column(String(50), index=True, nullable=False)
+    nacionalidad = Column(String(50), nullable=False)
+    numero = Column(Integer, nullable=False)
     activo = Column(Boolean, default=True)
     escuderia_id = Column(Integer, ForeignKey("escuderias.id"))
 
+    # 🔹 Campos que antes estaban en PerfilPiloto
+    fecha_nacimiento = Column(Date, nullable=True)
+    biografia = Column(String(500), nullable=True)
+    twitter = Column(String(50), nullable=True)
+
+    # 🔹 Nuevo campo para imagen del piloto
+    imagen_url = Column(String(255), nullable=True)
+
     escuderia = relationship("Escuderia", back_populates="pilotos")
-    perfil = relationship("PerfilPiloto", back_populates="piloto", uselist=False)
     circuitos = relationship("Circuito", secondary=piloto_circuito, back_populates="pilotos")
     tiempos = relationship("Tiempo", back_populates="piloto")
-
-
-class PerfilPiloto(Base):
-    __tablename__ = "perfiles_piloto"
-
-    id = Column(Integer, primary_key=True, index=True)
-    piloto_id = Column(Integer, ForeignKey("pilotos.id"), unique=True, nullable=False)
-    fecha_nacimiento = Column(Date, nullable=True)
-    biografia = Column(String, nullable=True)
-    twitter = Column(String, nullable=True)
-
-    piloto = relationship("Piloto", back_populates="perfil")
 
 
 class Circuito(Base):
     __tablename__ = "circuitos"
 
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, unique=True, index=True)
-    pais = Column(String)
-    longitud_km = Column(Integer)
+    nombre = Column(String(50), unique=True, index=True, nullable=False)
+    pais = Column(String(50), nullable=False)
+    longitud_km = Column(Float, nullable=True)  # mejor Float para km
     activo = Column(Boolean, default=True)
+    imagen_url = Column(String(255), nullable=True)
 
     pilotos = relationship("Piloto", secondary=piloto_circuito, back_populates="circuitos")
     tiempos = relationship("Tiempo", back_populates="circuito")
@@ -70,9 +66,9 @@ class Tiempo(Base):
     id = Column(Integer, primary_key=True, index=True)
     piloto_id = Column(Integer, ForeignKey("pilotos.id"))
     circuito_id = Column(Integer, ForeignKey("circuitos.id"))
-    tiempo_vuelta = Column(Float)
-    posicion = Column(Integer)
-    fecha = Column(Date)
+    tiempo_vuelta = Column(Float, nullable=False)
+    posicion = Column(Integer, nullable=True)
+    fecha = Column(Date, nullable=True)
     activo = Column(Boolean, default=True)
 
     piloto = relationship("Piloto", back_populates="tiempos")
