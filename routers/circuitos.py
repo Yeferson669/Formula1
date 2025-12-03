@@ -61,7 +61,7 @@ def buscar_circuitos(request: Request, nombre: str | None = None, db: Session = 
     )
 
 # -----------------------------
-# CREATE: Crear circuito (formulario con imagen)
+# CREATE: Crear circuito (formulario con imagen y descripción)
 # -----------------------------
 @router.post("/", response_class=HTMLResponse)
 async def create_circuito(
@@ -69,6 +69,7 @@ async def create_circuito(
     nombre: str = Form(...),
     pais: str = Form(...),
     longitud_km: float = Form(None),
+    descripcion: str = Form(None),          # ✅ nuevo campo
     imagen: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
@@ -89,6 +90,7 @@ async def create_circuito(
         nombre=nombre,
         pais=pais,
         longitud_km=longitud_km,
+        descripcion=descripcion,            # ✅ guardar descripción
         imagen_url=imagen_url,
         activo=True
     )
@@ -106,7 +108,15 @@ async def create_circuito(
 # UPDATE: Editar circuito
 # -----------------------------
 @router.post("/editar/{circuito_id}", response_class=HTMLResponse)
-def update_circuito(request: Request, circuito_id: int, nombre: str = Form(...), pais: str = Form(...), longitud_km: float = Form(None), db: Session = Depends(get_db)):
+def update_circuito(
+    request: Request,
+    circuito_id: int,
+    nombre: str = Form(...),
+    pais: str = Form(...),
+    longitud_km: float = Form(None),
+    descripcion: str = Form(None),          # ✅ nuevo campo
+    db: Session = Depends(get_db)
+):
     db_circuito = db.query(Circuito).filter(Circuito.id == circuito_id, Circuito.activo == True).first()
     if not db_circuito:
         return templates.TemplateResponse("error.html", {"request": request, "error": "Circuito no encontrado"})
@@ -114,6 +124,7 @@ def update_circuito(request: Request, circuito_id: int, nombre: str = Form(...),
     db_circuito.nombre = nombre
     db_circuito.pais = pais
     db_circuito.longitud_km = longitud_km
+    db_circuito.descripcion = descripcion   # ✅ actualizar descripción
     db.commit()
     db.refresh(db_circuito)
 

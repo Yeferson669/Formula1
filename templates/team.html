@@ -1,33 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Equipo: {{ team.nombre }}</h1>
+<h1 class="text-3xl font-bold text-red-500 mb-6">Equipo: {{ team.nombre }}</h1>
 
-{% if team.logo_url %}
-    <img src="/{{ team.logo_url }}" alt="Logo de {{ team.nombre }}" class="team-logo-large">
-{% else %}
-    <p><em>Sin logo disponible</em></p>
-{% endif %}
+<div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-md mx-auto mb-8 text-center">
+    {% if team.logo_url %}
+        <img src="/{{ team.logo_url }}" alt="Logo de {{ team.nombre }}"
+             class="w-40 h-auto object-contain mx-auto mb-4 rounded">
+    {% else %}
+        <p class="italic text-gray-400 mb-4">Sin logo disponible</p>
+    {% endif %}
+    <p class="text-sm"><strong>País:</strong> {{ team.pais if team.pais else "No especificado" }}</p>
+</div>
 
-<p><strong>País:</strong> {{ team.pais if team.pais else "No especificado" }}</p>
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Pilotos</h2>
 
-<div class="pilotos-container">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
     {% for piloto in pilotos %}
-        <div class="piloto-card">
-            <h2>{{ piloto.nombre }} (N° {{ piloto.numero }})</h2>
-            
+        <div class="bg-gray-800 text-white p-4 rounded-lg shadow-md flex flex-col">
+            <h2 class="text-lg font-semibold text-red-300 mb-2">
+                {{ piloto.nombre }} (N° {{ piloto.numero }})
+            </h2>
+
             {% if piloto.imagen_url %}
-                <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}" class="pilot-photo">
+                <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}"
+                     class="w-full h-32 object-cover rounded mb-3">
             {% endif %}
-            
-            <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
-            <a href="/pilotos/{{ piloto.id }}" class="btn">Ver detalles</a>
+
+            <p class="mb-2"><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
+
+            <a href="/pilotos/{{ piloto.id }}"
+               class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
+                Ver detalles
+            </a>
         </div>
     {% else %}
-        <p>No hay pilotos registrados en este equipo.</p>
+        <p class="italic text-gray-400">No hay pilotos registrados en este equipo.</p>
     {% endfor %}
 </div>
 
-<br>
-<a href="/teams/" class="back">⬅ Volver al listado de equipos</a>
+<div class="text-center mt-6">
+    <a href="/teams/" class="text-red-400 hover:text-red-600 font-semibold">⬅ Volver al listado de equipos</a>
+</div>
 {% endblock %}

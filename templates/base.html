@@ -4,127 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fórmula 1 | Proyecto</title>
+
+    <!-- ✅ Tailwind CSS vía CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Opcional: tu CSS personalizado si quieres mantener algo -->
     <link rel="stylesheet" href="/static/styles.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0d0d0d;
-            color: #f2f2f2;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #e10600;
-            color: white;
-            text-align: center;
-            padding: 20px 0;
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-        nav {
-            background-color: #1a1a1a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            padding: 10px;
-            flex-wrap: wrap;
-        }
-        nav a {
-            color: #f2f2f2;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        nav a:hover {
-            color: #e10600;
-        }
-        nav form {
-            display: inline-flex;
-            gap: 5px;
-        }
-        nav input[type="text"] {
-            padding: 5px;
-            border-radius: 5px;
-            border: none;
-        }
-        nav button {
-            background-color: #e10600;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        nav button:hover {
-            background-color: #b00500;
-        }
-        main {
-            padding: 30px;
-            max-width: 900px;
-            margin: auto;
-        }
-        a {
-            color: #e10600;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            background: #1a1a1a;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 10px;
-        }
-        footer {
-            background-color: #111;
-            color: #888;
-            text-align: center;
-            padding: 15px;
-            font-size: 0.9em;
-            margin-top: 40px;
-        }
-    </style>
 </head>
-<body>
+<body class="bg-black text-gray-100 font-sans">
 
-<header>
-    🏎️ Fórmula 1 - Proyecto
-</header>
+    <!-- Header -->
+    <header class="bg-red-600 text-white text-center py-6 text-2xl font-bold">
+        🏎️ Fórmula 1 - Proyecto
+    </header>
 
-<nav>
-    <a href="/">Inicio</a>
-    <a href="/escuderias">Escuderías</a>
-    <a href="/pilotos">Pilotos</a>
-    <a href="/circuitos">Circuitos</a>
-    <a href="/tiempos">Tiempos</a>
-    <a href="/dashboard">Dashboard</a>
+    <!-- Navbar -->
+    <nav class="bg-gray-900 flex flex-wrap justify-center items-center gap-6 p-4">
+        <a href="/" class="text-gray-100 font-bold hover:text-red-500">Inicio</a>
+        <a href="/escuderias" class="text-gray-100 font-bold hover:text-red-500">Escuderías</a>
+        <a href="/pilotos" class="text-gray-100 font-bold hover:text-red-500">Pilotos</a>
+        <a href="/circuitos" class="text-gray-100 font-bold hover:text-red-500">Circuitos</a>
+        <a href="/tiempos" class="text-gray-100 font-bold hover:text-red-500">Tiempos</a>
+        <a href="/dashboard" class="text-gray-100 font-bold hover:text-red-500">Dashboard</a>
 
-    <!-- 🔎 Buscador de pilotos -->
-    <form action="/pilotos/buscar/" method="get">
-        <input type="text" name="nombre" placeholder="Buscar piloto...">
-        <button type="submit">🔍</button>
-    </form>
+        <!-- 🔎 Buscador de pilotos -->
+        <form action="/pilotos/buscar/" method="get" class="flex gap-2">
+            <input type="text" name="nombre" placeholder="Buscar piloto..."
+                   class="px-2 py-1 rounded border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">🔍</button>
+        </form>
 
-    <!-- 🔎 Buscador de escuderías -->
-    <form action="/escuderias/buscar/" method="get">
-        <input type="text" name="nombre" placeholder="Buscar escudería...">
-        <button type="submit">🔍</button>
-    </form>
-</nav>
+        <!-- 🔎 Buscador de escuderías -->
+        <form action="/escuderias/buscar/" method="get" class="flex gap-2">
+            <input type="text" name="nombre" placeholder="Buscar escudería..."
+                   class="px-2 py-1 rounded border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded">🔍</button>
+        </form>
+    </nav>
 
-<main>
-    {% block content %}{% endblock %}
-</main>
+    <!-- Main content -->
+    <main class="p-6 max-w-5xl mx-auto">
+        {% block content %}{% endblock %}
+    </main>
 
-<footer>
-    © {{ current_year }} Proyecto FastAPI - Fórmula 1
-</footer>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 text-center py-4 text-sm mt-10">
+        © {{ current_year }} Proyecto FastAPI - Fórmula 1
+    </footer>
 
 </body>
 </html>

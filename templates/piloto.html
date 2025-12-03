@@ -1,20 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Listado de Pilotos</h1>
+<h1 class="text-3xl font-bold text-red-500 mb-6">Listado de Pilotos</h1>
 
-<div class="pilotos-container">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for piloto in pilotos %}
-    <div class="piloto-card">
-        <h2>{{ piloto.nombre }} (N° {{ piloto.numero }})</h2>
-        <p><strong>País:</strong> {{ piloto.pais }}</p>
-        <a href="/pilotos/{{ piloto.id }}">Ver detalles</a>
-    </div>
+        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
+            <h2 class="text-xl font-semibold text-red-300 mb-2">
+                {{ piloto.nombre }} (N° {{ piloto.numero }})
+            </h2>
+            <p class="mb-4"><strong>País:</strong> {{ piloto.pais }}</p>
+
+            <a href="/pilotos/{{ piloto.id }}"
+               class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
+                Ver detalles
+            </a>
+        </div>
     {% else %}
-    <p>No hay pilotos registrados.</p>
+        <p class="text-center text-gray-300">No hay pilotos registrados.</p>
     {% endfor %}
 </div>
 
-<br>
-<a href="/" class="btn-back">⬅ Volver al inicio</a>
+<div class="text-center mt-6">
+    <a href="/" class="text-red-400 hover:text-red-600 font-semibold">⬅ Volver al inicio</a>
+</div>
 {% endblock %}

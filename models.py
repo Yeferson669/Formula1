@@ -55,10 +55,12 @@ class Circuito(Base):
     longitud_km = Column(Float, nullable=True)  # mejor Float para km
     activo = Column(Boolean, default=True)
     imagen_url = Column(String(255), nullable=True)
+    descripcion = Column(String, nullable=True)
+
 
     pilotos = relationship("Piloto", secondary=piloto_circuito, back_populates="circuitos")
     tiempos = relationship("Tiempo", back_populates="circuito")
-
+   
 
 class Tiempo(Base):
     __tablename__ = "tiempos"
@@ -71,5 +73,9 @@ class Tiempo(Base):
     fecha = Column(Date, nullable=True)
     activo = Column(Boolean, default=True)
 
+    # Relaciones
     piloto = relationship("Piloto", back_populates="tiempos")
     circuito = relationship("Circuito", back_populates="tiempos")
+
+    def __repr__(self):
+        return f"<Tiempo id={self.id} piloto_id={self.piloto_id} circuito_id={self.circuito_id} tiempo_vuelta={self.tiempo_vuelta}>"

@@ -1,31 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>👨‍✈️ Pilotos de Fórmula 1</h1>
+<h1 class="text-3xl font-bold text-red-500 mb-6">👨‍✈️ Pilotos de Fórmula 1</h1>
 
-<div class="pilotos-container">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for piloto in pilotos %}
-        <div class="piloto-card">
-            <h2>{{ piloto.nombre }} (N° {{ piloto.numero }})</h2>
-            
+        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
+            <h2 class="text-xl font-semibold text-red-300 mb-2">
+                {{ piloto.nombre }} (N° {{ piloto.numero }})
+            </h2>
+
             {% if piloto.imagen_url %}
-                <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}" class="pilot-photo">
+                <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}"
+                     class="w-full h-40 object-cover rounded mb-4">
             {% else %}
-                <p><em>Sin foto disponible</em></p>
+                <p class="italic text-gray-400 mb-4">Sin foto disponible</p>
             {% endif %}
-            
-            <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
-            
+
+            <p class="mb-2"><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
+
             {% if piloto.escuderia %}
-                <p><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
+                <p class="mb-4"><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
             {% else %}
-                <p><strong>Escudería:</strong> <em>No asignada</em></p>
+                <p class="italic text-gray-400 mb-4"><strong>Escudería:</strong> No asignada</p>
             {% endif %}
-            
-            <a href="/pilotos/{{ piloto.id }}" class="btn">Ver detalles</a>
+
+            <a href="/pilotos/{{ piloto.id }}"
+               class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
+                Ver detalles
+            </a>
         </div>
     {% else %}
-        <p>No hay pilotos registrados.</p>
+        <p class="text-center text-gray-300">No hay pilotos registrados.</p>
     {% endfor %}
 </div>
 {% endblock %}

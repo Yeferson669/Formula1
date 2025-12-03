@@ -1,24 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="detalle-tiempo">
-    <h1>Detalle del Tiempo</h1>
+<div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold text-blue-400 mb-6">Detalle del Tiempo</h1>
 
     {% if tiempo %}
-        <p><strong>Piloto:</strong> {{ tiempo.piloto.nombre if tiempo.piloto else "Desconocido" }}</p>
-        <p><strong>Circuito:</strong> {{ tiempo.circuito.nombre if tiempo.circuito else "Desconocido" }}</p>
-        <p><strong>Tiempo de vuelta:</strong> {{ tiempo.tiempo_vuelta }} seg</p>
+        <p class="mb-2"><strong>Piloto:</strong> {{ tiempo.piloto.nombre if tiempo.piloto else "Desconocido" }}</p>
+        <p class="mb-2"><strong>Circuito:</strong> {{ tiempo.circuito.nombre if tiempo.circuito else "Desconocido" }}</p>
+        <p class="mb-2"><strong>Tiempo de vuelta:</strong> {{ tiempo.tiempo_vuelta }} seg</p>
+
         {% if tiempo.posicion %}
-            <p><strong>Posición:</strong> {{ tiempo.posicion }}</p>
+            <p class="mb-2"><strong>Posición:</strong> {{ tiempo.posicion }}</p>
         {% endif %}
+
         {% if tiempo.fecha %}
-            <p><strong>Fecha:</strong> {{ tiempo.fecha }}</p>
+            <p class="mb-2"><strong>Fecha:</strong> {{ tiempo.fecha }}</p>
+        {% endif %}
+
+        {% if tiempo.circuito and tiempo.circuito.imagen_url %}
+            <div class="mt-4">
+                <img src="/{{ tiempo.circuito.imagen_url }}" alt="Imagen del circuito {{ tiempo.circuito.nombre }}"
+                     class="w-full max-w-lg mx-auto rounded-lg shadow-md object-cover">
+            </div>
+        {% else %}
+            <p class="italic text-gray-400 mt-4">Sin imagen disponible para este circuito</p>
         {% endif %}
     {% else %}
-        <p><em>{{ error }}</em></p>
+        <p class="italic text-gray-400">{{ error }}</p>
     {% endif %}
 
-    <br>
-    <a href="/tiempos/" class="back">⬅ Volver al listado de tiempos</a>
+    <div class="text-center mt-6">
+        <a href="/tiempos/"
+           class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+            ⬅ Volver al listado de tiempos
+        </a>
+    </div>
 </div>
 {% endblock %}

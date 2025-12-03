@@ -1,51 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>📊 Dashboard de Fórmula 1</h1>
+<h1 class="text-3xl font-bold text-red-500 mb-8">📊 Dashboard de Fórmula 1</h1>
 
 <!-- Pilotos por escudería -->
-<section>
-    <h2>Pilotos por escudería</h2>
-    <div class="chart-container">
+<section class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pilotos por escudería</h2>
+    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
         <canvas id="pilotosPorEscuderia"></canvas>
     </div>
 </section>
 
 <!-- Tiempos promedio por circuito -->
-<section>
-    <h2>Tiempos promedio por circuito</h2>
-    <div class="chart-container">
+<section class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-200 mb-4">Tiempos promedio por circuito</h2>
+    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
         <canvas id="tiemposPorCircuito"></canvas>
     </div>
 </section>
 
 <!-- Pilotos por nacionalidad -->
-<section>
-    <h2>Pilotos por nacionalidad</h2>
-    <div class="chart-container">
+<section class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pilotos por nacionalidad</h2>
+    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
         <canvas id="pilotosPorNacionalidad"></canvas>
     </div>
 </section>
 
 <!-- Escuderías activas vs eliminadas -->
-<section>
-    <h2>Estado de escuderías</h2>
-    <div class="chart-container">
+<section class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-200 mb-4">Estado de escuderías</h2>
+    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
         <canvas id="escuderiasStatus"></canvas>
     </div>
 </section>
 
 <!-- Longitud de circuitos -->
-<section>
-    <h2>Longitudes de circuitos</h2>
-    <div class="chart-container">
+<section class="mb-8">
+    <h2 class="text-xl font-semibold text-gray-200 mb-4">Longitudes de circuitos</h2>
+    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
         <canvas id="longitudesCircuitos"></canvas>
     </div>
 </section>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Datos desde FastAPI
+    // ✅ Tu lógica de Chart.js se mantiene exactamente igual
     const escuderias = {{ escuderias | safe }};
     const pilotos_count = {{ pilotos_count | safe }};
     const circuitos = {{ circuitos | safe }};

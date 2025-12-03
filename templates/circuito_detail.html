@@ -1,21 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="detalle-circuito">
-    <h1>Circuito: {{ circuito.nombre }}</h1>
+<div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold text-blue-400 mb-6">Circuito: {{ circuito.nombre }}</h1>
 
     {% if circuito.imagen_url %}
-        <img src="/{{ circuito.imagen_url }}" alt="Imagen de {{ circuito.nombre }}" class="circuito-photo-large">
+        <img src="/{{ circuito.imagen_url }}" alt="Imagen de {{ circuito.nombre }}"
+             class="w-full max-w-lg mx-auto rounded-lg shadow-md mb-6 object-cover">
     {% else %}
-        <p><em>Sin imagen disponible</em></p>
+        <p class="italic text-gray-400 mb-6">Sin imagen disponible</p>
     {% endif %}
 
-    <p><strong>País:</strong> {{ circuito.pais }}</p>
+    <p class="mb-2"><strong>País:</strong> {{ circuito.pais }}</p>
     {% if circuito.longitud_km %}
-        <p><strong>Longitud:</strong> {{ circuito.longitud_km }} km</p>
+        <p class="mb-2"><strong>Longitud:</strong> {{ circuito.longitud_km }} km</p>
     {% endif %}
 
-    <br>
-    <a href="/circuitos/" class="back">⬅ Volver al listado de circuitos</a>
+    <div class="mt-6 text-center">
+        <a href="/circuitos/"
+           class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+            ⬅ Volver al listado de circuitos
+        </a>
+    </div>
 </div>
 {% endblock %}

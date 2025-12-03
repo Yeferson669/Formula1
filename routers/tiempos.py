@@ -51,9 +51,11 @@ def get_tiempo_by_id(request: Request, tiempo_id: int, db: Session = Depends(get
             "tiempo_detail.html",
             {"request": request, "error": "Tiempo no encontrado"}
         )
+    
+    # ✅ Pasamos también el circuito al template para mostrar su imagen
     return templates.TemplateResponse(
         "tiempo_detail.html",
-        {"request": request, "tiempo": tiempo}
+        {"request": request, "tiempo": tiempo, "circuito": tiempo.circuito}
     )
 
 # -----------------------------
@@ -81,11 +83,18 @@ async def create_tiempo(
     if posicion is not None and posicion < 1:
         return templates.TemplateResponse("error.html", {"request": request, "error": "La posición debe ser mayor o igual a 1"})
 
+    # ✅ Convertimos fecha a objeto datetime.date si viene como string
+    fecha_obj = None
     if fecha:
+        try:
+            fecha_obj = datetime.datetime.strptime(fecha, "%Y-%m-%d").date()
+        except ValueError:
+            return templates.TemplateResponse("error.html", {"request": request, "error": "Formato de fecha inválido (usar YYYY-MM-DD)"})
+
         existente = db.query(Tiempo).filter(
             Tiempo.piloto_id == piloto_id,
             Tiempo.circuito_id == circuito_id,
-            Tiempo.fecha == fecha,
+            Tiempo.fecha == fecha_obj,
             Tiempo.activo == True
         ).first()
         if existente:
@@ -96,14 +105,19 @@ async def create_tiempo(
         circuito_id=circuito_id,
         tiempo_vuelta=tiempo_vuelta,
         posicion=posicion,
-        fecha=fecha,
+        fecha=fecha_obj,
         activo=True
     )
     db.add(db_tiempo)
     db.commit()
     db.refresh(db_tiempo)
 
-    tiempos = db.query(Tiempo).filter(Tiempo.activo == True).all()
+    tiempos = (
+        db.query(Tiempo)
+        .options(joinedload(Tiempo.piloto), joinedload(Tiempo.circuito))
+        .filter(Tiempo.activo == True)
+        .all()
+    )
     return templates.TemplateResponse(
         "tiempos_list.html",
         {"request": request, "tiempos": tiempos, "mensaje": "Tiempo registrado correctamente"}
@@ -113,18 +127,33 @@ async def create_tiempo(
 # UPDATE: Editar tiempo
 # -----------------------------
 @router.post("/editar/{tiempo_id}", response_class=HTMLResponse)
-def update_tiempo(request: Request, tiempo_id: int, tiempo_vuelta: float = Form(...), posicion: int = Form(None), fecha: str = Form(None), db: Session = Depends(get_db)):
+def update_tiempo(
+    request: Request,
+    tiempo_id: int,
+    tiempo_vuelta: float = Form(...),
+    posicion: int = Form(None),
+    fecha: str = Form(None),
+    db: Session = Depends(get_db)
+):
     db_tiempo = db.query(Tiempo).filter(Tiempo.id == tiempo_id, Tiempo.activo == True).first()
     if not db_tiempo:
         return templates.TemplateResponse("error.html", {"request": request, "error": "Tiempo no encontrado"})
 
     db_tiempo.tiempo_vuelta = tiempo_vuelta
     db_tiempo.posicion = posicion
-    db_tiempo.fecha = fecha
+
+    if fecha:
+        try:
+            db_tiempo.fecha = datetime.datetime.strptime(fecha, "%Y-%m-%d").date()
+        except ValueError:
+            return templates.TemplateResponse("error.html", {"request": request, "error": "Formato de fecha inválido (usar YYYY-MM-DD)"})
+    else:
+        db_tiempo.fecha = None
+
     db.commit()
     db.refresh(db_tiempo)
 
-    return templates.TemplateResponse("tiempo_detail.html", {"request": request, "tiempo": db_tiempo})
+    return templates.TemplateResponse("tiempo_detail.html", {"request": request, "tiempo": db_tiempo, "circuito": db_tiempo.circuito})
 
 # -----------------------------
 # DELETE: Marcar tiempo como inactivo
@@ -137,7 +166,12 @@ def eliminar_tiempo(request: Request, tiempo_id: int, db: Session = Depends(get_
     tiempo.activo = False
     db.commit()
 
-    tiempos = db.query(Tiempo).filter(Tiempo.activo == True).all()
+    tiempos = (
+        db.query(Tiempo)
+        .options(joinedload(Tiempo.piloto), joinedload(Tiempo.circuito))
+        .filter(Tiempo.activo == True)
+        .all()
+    )
     return templates.TemplateResponse(
         "tiempos_list.html",
         {"request": request, "tiempos": tiempos, "mensaje": f"Tiempo con ID {tiempo_id} eliminado"}
@@ -148,7 +182,12 @@ def eliminar_tiempo(request: Request, tiempo_id: int, db: Session = Depends(get_
 # -----------------------------
 @router.get("/eliminados/", response_class=HTMLResponse)
 def get_tiempos_eliminados(request: Request, db: Session = Depends(get_db)):
-    tiempos = db.query(Tiempo).filter(Tiempo.activo == False).all()
+    tiempos = (
+        db.query(Tiempo)
+        .options(joinedload(Tiempo.piloto), joinedload(Tiempo.circuito))
+        .filter(Tiempo.activo == False)
+        .all()
+    )
     return templates.TemplateResponse(
         "tiempos_list.html",
         {"request": request, "tiempos": tiempos}

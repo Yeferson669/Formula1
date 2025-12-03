@@ -1,37 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Escudería: {{ escuderia.nombre }}</h1>
+<h1 class="text-3xl font-bold text-red-500 mb-6">Escudería: {{ escuderia.nombre }}</h1>
 
-<div class="escuderia-card">
+<div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-md mx-auto mb-8 text-center">
     {% if escuderia.logo_url %}
-        <img src="{{ escuderia.logo_url }}" alt="Logo de {{ escuderia.nombre }}" width="150">
+        <img src="{{ escuderia.logo_url }}" alt="Logo de {{ escuderia.nombre }}"
+             class="w-40 h-auto object-contain mx-auto mb-4 rounded">
     {% endif %}
-    <p><strong>País:</strong> {{ escuderia.pais }}</p>
+    <p class="text-sm"><strong>País:</strong> {{ escuderia.pais }}</p>
 </div>
 
-<h2>Pilotos</h2>
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Pilotos</h2>
 
-<!-- 🔎 Buscador de pilotos dentro de la escudería -->
-<form action="/pilotos/buscar/" method="get" style="margin-bottom: 20px;">
-    <input type="text" name="nombre" 
-           placeholder="Buscar piloto en esta escudería..." 
-           required minlength="3" maxlength="50">
-    <button type="submit">Buscar</button>
-</form>
-
-<ul>
+<ul class="space-y-2">
     {% for piloto in pilotos %}
-        <li>
-            <a href="/pilotos/{{ piloto.id }}">
+        <li class="bg-gray-800 p-3 rounded-lg shadow-md">
+            <a href="/pilotos/{{ piloto.id }}"
+               class="text-red-400 hover:text-red-600 font-semibold">
                 {{ piloto.nombre }} (N° {{ piloto.numero }}) - {{ piloto.pais }}
             </a>
         </li>
     {% else %}
-        <li>No hay pilotos registrados en esta escudería.</li>
+        <li class="italic text-gray-400">No hay pilotos registrados en esta escudería.</li>
     {% endfor %}
 </ul>
 
-<br>
-<a href="/escuderias">⬅ Volver al listado de escuderías</a>
+<div class="text-center mt-6">
+    <a href="/escuderias" class="text-red-400 hover:text-red-600 font-semibold">⬅ Volver al listado de escuderías</a>
+</div>
 {% endblock %}

@@ -1,45 +1,60 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="detalle-piloto">
-    <h1>Piloto: {{ piloto.nombre }}</h1>
+<div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
+    <!-- Nombre del piloto -->
+    <h1 class="text-3xl font-bold text-red-400 mb-6">Piloto: {{ piloto.nombre }}</h1>
 
+    <!-- Imagen del piloto -->
     {% if piloto.imagen_url %}
-        <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}" class="pilot-photo-large">
+        <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}"
+             class="w-48 h-48 object-cover rounded-lg shadow-md mx-auto mb-6">
     {% else %}
-        <p><em>Sin foto disponible</em></p>
+        <p class="italic text-gray-400 mb-6 text-center">Sin foto disponible</p>
     {% endif %}
 
-    <p><strong>Número:</strong> {{ piloto.numero }}</p>
-    <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
+    <!-- Información del piloto -->
+    <div class="space-y-2 text-sm">
+        <p><strong>Número:</strong> {{ piloto.numero }}</p>
+        <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
 
-    {% if piloto.escuderia %}
-        <p><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
-    {% else %}
-        <p><strong>Escudería:</strong> <em>No asignada</em></p>
-    {% endif %}
+        {% if piloto.escuderia %}
+            <p><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
+        {% else %}
+            <p><strong>Escudería:</strong> <em>No asignada</em></p>
+        {% endif %}
 
-    {% if piloto.fecha_nacimiento %}
-        <p><strong>Fecha de nacimiento:</strong> {{ piloto.fecha_nacimiento.strftime('%d/%m/%Y') }}</p>
-    {% endif %}
+        {% if piloto.fecha_nacimiento %}
+            <p><strong>Fecha de nacimiento:</strong> {{ piloto.fecha_nacimiento.strftime('%d/%m/%Y') }}</p>
+        {% endif %}
 
-    {% if piloto.biografia %}
-        <p><strong>Biografía:</strong> {{ piloto.biografia }}</p>
-    {% endif %}
+        {% if piloto.biografia %}
+            <p class="mt-4"><strong>Biografía:</strong> {{ piloto.biografia }}</p>
+        {% endif %}
 
-    {% if piloto.twitter %}
-        <p><strong>Twitter:</strong> 
-            <a href="https://twitter.com/{{ piloto.twitter | replace('@','') }}" target="_blank">
-                {{ piloto.twitter }}
+        {% if piloto.twitter %}
+            <p><strong>Twitter:</strong>
+                <a href="https://twitter.com/{{ piloto.twitter | replace('@','') }}" target="_blank"
+                   class="text-blue-400 hover:text-blue-600">
+                    {{ piloto.twitter }}
+                </a>
+            </p>
+        {% endif %}
+    </div>
+
+    <!-- Volver -->
+    <div class="text-center mt-6">
+        {% if piloto.escuderia %}
+            <a href="/teams/team/{{ piloto.escuderia.nombre }}"
+               class="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">
+                ⬅ Volver al equipo
             </a>
-        </p>
-    {% endif %}
-
-    <br>
-    {% if piloto.escuderia %}
-        <a href="/teams/team/{{ piloto.escuderia.nombre }}" class="back">⬅ Volver al equipo</a>
-    {% else %}
-        <a href="/pilotos/" class="back">⬅ Volver al listado de pilotos</a>
-    {% endif %}
+        {% else %}
+            <a href="/pilotos/"
+               class="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">
+                ⬅ Volver al listado de pilotos
+            </a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

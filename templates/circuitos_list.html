@@ -1,28 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>🛣️ Circuitos de Fórmula 1</h1>
+<h1 class="text-3xl font-bold text-blue-400 mb-6">🛣️ Circuitos de Fórmula 1</h1>
 
-<div class="circuitos-container">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for c in circuitos %}
-        <div class="circuito-card">
-            <h2>{{ c.nombre }}</h2>
-            
+        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
+            <h2 class="text-xl font-semibold text-blue-300 mb-2">{{ c.nombre }}</h2>
+
             {% if c.imagen_url %}
-                <img src="/{{ c.imagen_url }}" alt="Imagen de {{ c.nombre }}" class="circuito-photo">
+                <img src="/{{ c.imagen_url }}" alt="Imagen de {{ c.nombre }}"
+                     class="w-full h-40 object-cover rounded mb-4">
             {% else %}
-                <p><em>Sin imagen disponible</em></p>
+                <p class="italic text-gray-400 mb-4">Sin imagen disponible</p>
             {% endif %}
-            
-            <p><strong>País:</strong> {{ c.pais }}</p>
+
+            <p class="mb-2"><strong>País:</strong> {{ c.pais }}</p>
+
             {% if c.longitud_km %}
-                <p><strong>Longitud:</strong> {{ c.longitud_km }} km</p>
+                <p class="mb-2"><strong>Longitud:</strong> {{ c.longitud_km }} km</p>
             {% endif %}
-            
-            <a href="/circuitos/{{ c.id }}" class="btn">Ver detalles</a>
+
+            {% if c.descripcion %}
+                <p class="mb-4 text-sm"><strong>Biografía:</strong> {{ c.descripcion }}</p>
+            {% else %}
+                <p class="italic text-gray-400 mb-4">No hay información disponible</p>
+            {% endif %}
+
+            <a href="/circuitos/{{ c.id }}"
+               class="mt-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-center">
+                Ver detalles
+            </a>
         </div>
     {% else %}
-        <p>No hay circuitos registrados.</p>
+        <p class="text-center text-gray-300">No hay circuitos registrados.</p>
     {% endfor %}
 </div>
 {% endblock %}

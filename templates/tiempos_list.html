@@ -1,24 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>⏱️ Tiempos registrados</h1>
+<h1 class="text-3xl font-bold text-blue-400 mb-6">⏱️ Tiempos registrados</h1>
 
-<div class="tiempos-container">
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for t in tiempos %}
-        <div class="tiempo-card">
-            <p><strong>Piloto:</strong> {{ t.piloto.nombre if t.piloto else "Desconocido" }}</p>
-            <p><strong>Circuito:</strong> {{ t.circuito.nombre if t.circuito else "Desconocido" }}</p>
-            <p><strong>Tiempo de vuelta:</strong> {{ t.tiempo_vuelta }} seg</p>
+        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
+            <p class="mb-2"><strong>Piloto:</strong> {{ t.piloto.nombre if t.piloto else "Desconocido" }}</p>
+            <p class="mb-2"><strong>Circuito:</strong> {{ t.circuito.nombre if t.circuito else "Desconocido" }}</p>
+            <p class="mb-2"><strong>Tiempo de vuelta:</strong> {{ t.tiempo_vuelta }} seg</p>
+
             {% if t.posicion %}
-                <p><strong>Posición:</strong> {{ t.posicion }}</p>
+                <p class="mb-2"><strong>Posición:</strong> {{ t.posicion }}</p>
             {% endif %}
+
             {% if t.fecha %}
-                <p><strong>Fecha:</strong> {{ t.fecha }}</p>
+                <p class="mb-4"><strong>Fecha:</strong> {{ t.fecha }}</p>
             {% endif %}
-            <a href="/tiempos/{{ t.id }}" class="btn">Ver detalle</a>
+
+            <a href="/tiempos/{{ t.id }}"
+               class="mt-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-center">
+                Ver detalle
+            </a>
         </div>
     {% else %}
-        <p>No hay tiempos registrados.</p>
+        <p class="text-center text-gray-300">No hay tiempos registrados.</p>
     {% endfor %}
 </div>
 {% endblock %}
