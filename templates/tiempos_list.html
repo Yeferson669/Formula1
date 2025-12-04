@@ -9,7 +9,9 @@
         <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
             <p class="mb-2"><strong>Piloto:</strong> {{ t.piloto.nombre if t.piloto else "Desconocido" }}</p>
             <p class="mb-2"><strong>Circuito:</strong> {{ t.circuito.nombre if t.circuito else "Desconocido" }}</p>
-            <p class="mb-2"><strong>Tiempo de vuelta:</strong> {{ t.tiempo_vuelta }} seg</p>
+            
+            <!-- 👇 Aquí usamos el campo formateado -->
+            <p class="mb-2"><strong>Tiempo de vuelta:</strong> {{ t.tiempo_formateado }}</p>
 
             {% if t.posicion %}
                 <p class="mb-2"><strong>Posición:</strong> {{ t.posicion }}</p>

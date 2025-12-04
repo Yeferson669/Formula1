@@ -6,7 +6,7 @@
 <p class="text-green-400 mb-4 text-center">{{ mensaje }}</p>
 {% endif %}
 
-<!-- Listado de escuderías -->
+<!-- Listado de escuderías activas -->
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
     {% for escuderia in escuderias %}
     <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg text-center">
@@ -21,13 +21,38 @@
             <a href="/escuderias/{{ escuderia.id }}">{{ escuderia.nombre }}</a>
         </h2>
         <p class="text-sm"><strong>País:</strong> {{ escuderia.pais }}</p>
-        <div class="mt-3">
+        <div class="mt-3 flex flex-col space-y-2">
             <a href="/escuderias/eliminar/{{ escuderia.id }}" 
-               class="text-red-500 hover:text-red-700">Eliminar</a>
+               class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                Eliminar
+            </a>
         </div>
     </div>
     {% else %}
     <p class="italic text-gray-400">No hay escuderías registradas.</p>
+    {% endfor %}
+</div>
+
+<hr class="my-6 border-gray-700">
+
+<!-- Listado de escuderías eliminadas -->
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Escuderías eliminadas</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    {% for escuderia in eliminadas %}
+    <div class="bg-gray-800 text-white p-6 rounded-lg shadow-lg text-center">
+        <h2 class="text-xl font-semibold text-gray-300 mb-2">
+            {{ escuderia.nombre }}
+        </h2>
+        <p class="text-sm"><strong>País:</strong> {{ escuderia.pais }}</p>
+        <div class="mt-3">
+            <a href="/escuderias/restaurar/{{ escuderia.id }}" 
+               class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                Restaurar
+            </a>
+        </div>
+    </div>
+    {% else %}
+    <p class="italic text-gray-400">No hay escuderías eliminadas.</p>
     {% endfor %}
 </div>
 

@@ -22,16 +22,26 @@ def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
 
-# Listado de pilotos + formulario
+# Listado de pilotos + formulario + eliminados
 @router.get("/", response_class=HTMLResponse)
 def listar_pilotos(request: Request, db: Session = Depends(get_db)):
     pilotos = db.query(Piloto).filter(Piloto.activo == True).all()
     for p in pilotos:
         p.imagen = convertir_imagen(p.imagen)
+
+    eliminados = db.query(Piloto).filter(Piloto.activo == False).all()
+    for e in eliminados:
+        e.imagen = convertir_imagen(e.imagen)
+
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
     return templates.TemplateResponse(
-        "piloto.html",   # 👈 listado + formulario
-        {"request": request, "pilotos": pilotos, "escuderias": escuderias}
+        "piloto.html",
+        {
+            "request": request,
+            "pilotos": pilotos,
+            "eliminados": eliminados,   # 👈 ahora también pasamos los eliminados
+            "escuderias": escuderias
+        }
     )
 
 
@@ -46,7 +56,7 @@ def detalle_piloto(request: Request, piloto_id: int, db: Session = Depends(get_d
     )
     if not piloto:
         return templates.TemplateResponse(
-            "piloto_detail.html",   # 👈 detalle
+            "piloto_detail.html",
             {"request": request, "piloto": None, "error": "Piloto no encontrado"}
         )
 
@@ -54,10 +64,7 @@ def detalle_piloto(request: Request, piloto_id: int, db: Session = Depends(get_d
     if piloto.escuderia:
         piloto.escuderia.logo = convertir_imagen(piloto.escuderia.logo)
 
-    return templates.TemplateResponse(
-        "piloto_detail.html",   # 👈 detalle
-        {"request": request, "piloto": piloto}
-    )
+    return templates.TemplateResponse("piloto_detail.html", {"request": request, "piloto": piloto})
 
 
 # Buscar pilotos
@@ -72,9 +79,19 @@ def buscar_pilotos(request: Request, nombre: str = None, db: Session = Depends(g
         p.imagen = convertir_imagen(p.imagen)
 
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
+    eliminados = db.query(Piloto).filter(Piloto.activo == False).all()
+    for e in eliminados:
+        e.imagen = convertir_imagen(e.imagen)
+
     return templates.TemplateResponse(
-        "piloto.html",   # 👈 listado + formulario
-        {"request": request, "pilotos": resultados, "escuderias": escuderias, "busqueda": nombre}
+        "piloto.html",
+        {
+            "request": request,
+            "pilotos": resultados,
+            "eliminados": eliminados,
+            "escuderias": escuderias,
+            "busqueda": nombre
+        }
     )
 
 
@@ -153,14 +170,24 @@ def eliminar_piloto(piloto_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url="/pilotos/", status_code=303)
 
 
-# Listar pilotos eliminados
+# Restaurar piloto
+@router.get("/restaurar/{piloto_id}", response_class=HTMLResponse)
+def restaurar_piloto(piloto_id: int, db: Session = Depends(get_db)):
+    piloto = db.query(Piloto).filter(Piloto.id == piloto_id, Piloto.activo == False).first()
+    if piloto:
+        piloto.activo = True
+        db.commit()
+    return RedirectResponse(url="/pilotos/", status_code=303)
+
+
+# Listar pilotos eliminados (opcional, ya que ahora se muestran en el mismo template)
 @router.get("/eliminados/", response_class=HTMLResponse)
 def listar_eliminados(request: Request, db: Session = Depends(get_db)):
-    pilotos = db.query(Piloto).filter(Piloto.activo == False).all()
-    for p in pilotos:
-        p.imagen = convertir_imagen(p.imagen)
+    eliminados = db.query(Piloto).filter(Piloto.activo == False).all()
+    for e in eliminados:
+        e.imagen = convertir_imagen(e.imagen)
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
     return templates.TemplateResponse(
-        "piloto.html",   # 👈 listado + formulario
-        {"request": request, "pilotos": pilotos, "escuderias": escuderias, "mensaje": "Listado de pilotos eliminados"}
+        "piloto.html",
+        {"request": request, "pilotos": [], "eliminados": eliminados, "escuderias": escuderias, "mensaje": "Listado de pilotos eliminados"}
     )

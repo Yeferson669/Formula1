@@ -22,19 +22,24 @@ def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
 
-# Listado de circuitos + formulario
+
 @router.get("/", response_class=HTMLResponse)
 def listar_circuitos(request: Request, db: Session = Depends(get_db)):
-    circuitos = db.query(Circuito).filter(Circuito.activo == True).all()
-    for c in circuitos:
+    activos = db.query(Circuito).filter(Circuito.activo == True).all()
+    for c in activos:
         c.imagen = convertir_imagen(c.imagen)
+
+    eliminados = db.query(Circuito).filter(Circuito.activo == False).all()
+    for c in eliminados:
+        c.imagen = convertir_imagen(c.imagen)
+
     return templates.TemplateResponse(
-        "circuitos.html",   # 👈 listado + formulario
-        {"request": request, "circuitos": circuitos}
+        "circuitos.html",
+        {"request": request, "circuitos": activos, "eliminados": eliminados}
     )
 
 
-# Detalle de circuito
+
 @router.get("/{circuito_id}", response_class=HTMLResponse)
 def detalle_circuito(request: Request, circuito_id: int, db: Session = Depends(get_db)):
     circuito = db.query(Circuito).filter(Circuito.id == circuito_id, Circuito.activo == True).first()
@@ -50,7 +55,7 @@ def detalle_circuito(request: Request, circuito_id: int, db: Session = Depends(g
     )
 
 
-# Crear circuito
+
 @router.post("/crear/", response_class=HTMLResponse)
 async def crear_circuito(
     nombre: str = Form(...),
@@ -79,7 +84,7 @@ async def crear_circuito(
     return RedirectResponse(url="/circuitos/", status_code=303)
 
 
-# Editar circuito
+
 @router.post("/editar/{circuito_id}", response_class=HTMLResponse)
 async def editar_circuito(
     circuito_id: int,
@@ -105,7 +110,7 @@ async def editar_circuito(
     return RedirectResponse(url=f"/circuitos/{circuito_id}", status_code=303)
 
 
-# Eliminar circuito
+
 @router.get("/eliminar/{circuito_id}", response_class=HTMLResponse)
 def eliminar_circuito(circuito_id: int, db: Session = Depends(get_db)):
     circuito = db.query(Circuito).filter(Circuito.id == circuito_id).first()
@@ -115,13 +120,23 @@ def eliminar_circuito(circuito_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url="/circuitos/", status_code=303)
 
 
-# Listar circuitos eliminados
+
+@router.get("/restaurar/{circuito_id}", response_class=HTMLResponse)
+def restaurar_circuito(circuito_id: int, db: Session = Depends(get_db)):
+    circuito = db.query(Circuito).filter(Circuito.id == circuito_id, Circuito.activo == False).first()
+    if circuito:
+        circuito.activo = True
+        db.commit()
+    return RedirectResponse(url="/circuitos/", status_code=303)
+
+
+
 @router.get("/eliminados/", response_class=HTMLResponse)
 def listar_eliminados(request: Request, db: Session = Depends(get_db)):
-    circuitos = db.query(Circuito).filter(Circuito.activo == False).all()
-    for c in circuitos:
+    eliminados = db.query(Circuito).filter(Circuito.activo == False).all()
+    for c in eliminados:
         c.imagen = convertir_imagen(c.imagen)
     return templates.TemplateResponse(
-        "circuitos.html",   # 👈 listado + formulario
-        {"request": request, "circuitos": circuitos, "mensaje": "Listado de circuitos eliminados"}
+        "circuitos.html",
+        {"request": request, "circuitos": [], "eliminados": eliminados, "mensaje": "Listado de circuitos eliminados"}
     )

@@ -28,6 +28,14 @@ def convertir_relaciones(tiempos):
     return tiempos
 
 
+# 👉 Nueva función para formatear el tiempo
+def formatear_tiempo(segundos: float) -> str:
+    minutos = int(segundos // 60)
+    seg = int(segundos % 60)
+    milis = int((segundos - int(segundos)) * 1000)
+    return f"{minutos:02}:{seg:02}.{milis:03}"
+
+
 # Listado de tiempos + formulario
 @router.get("/", response_class=HTMLResponse)
 def listar_tiempos(request: Request, db: Session = Depends(get_db)):
@@ -38,10 +46,15 @@ def listar_tiempos(request: Request, db: Session = Depends(get_db)):
         .all()
     )
     tiempos = convertir_relaciones(tiempos)
+
+    # 👉 Añadimos el campo formateado
+    for t in tiempos:
+        t.tiempo_formateado = formatear_tiempo(t.tiempo_vuelta)
+
     pilotos = db.query(Piloto).filter(Piloto.activo == True).all()
     circuitos = db.query(Circuito).filter(Circuito.activo == True).all()
     return templates.TemplateResponse(
-        "tiempos_list.html",   # 👈 listado + formulario
+        "tiempos_list.html",
         {"request": request, "tiempos": tiempos, "pilotos": pilotos, "circuitos": circuitos}
     )
 
@@ -59,6 +72,7 @@ def detalle_tiempo(request: Request, tiempo_id: int, db: Session = Depends(get_d
         return templates.TemplateResponse("tiempo_detail.html", {"request": request, "error": "Tiempo no encontrado"})
 
     convertir_relaciones([tiempo])
+    tiempo.tiempo_formateado = formatear_tiempo(tiempo.tiempo_vuelta)  # 👉 también en detalle
     return templates.TemplateResponse("tiempo_detail.html", {"request": request, "tiempo": tiempo})
 
 
@@ -161,9 +175,14 @@ def tiempos_eliminados(request: Request, db: Session = Depends(get_db)):
         .all()
     )
     tiempos = convertir_relaciones(tiempos)
+
+    # 👉 Añadimos el campo formateado también aquí
+    for t in tiempos:
+        t.tiempo_formateado = formatear_tiempo(t.tiempo_vuelta)
+
     pilotos = db.query(Piloto).filter(Piloto.activo == True).all()
     circuitos = db.query(Circuito).filter(Circuito.activo == True).all()
     return templates.TemplateResponse(
-        "tiempos_list.html",   # 👈 listado + formulario
+        "tiempos_list.html",
         {"request": request, "tiempos": tiempos, "pilotos": pilotos, "circuitos": circuitos, "mensaje": "Listado de tiempos eliminados"}
     )

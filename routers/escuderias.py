@@ -33,9 +33,18 @@ def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(
     for e in escuderias:
         e.logo = convertir_imagen(e.logo)
 
+    eliminadas = db.query(Escuderia).filter(Escuderia.activo == False).all()
+    for e in eliminadas:
+        e.logo = convertir_imagen(e.logo)
+
     return templates.TemplateResponse(
         "escuderias.html",
-        {"request": request, "escuderias": escuderias, "busqueda": nombre}
+        {
+            "request": request,
+            "escuderias": escuderias,
+            "eliminadas": eliminadas,
+            "busqueda": nombre
+        }
     )
 
 
@@ -44,9 +53,18 @@ def listar_escuderias(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
     for e in escuderias:
         e.logo = convertir_imagen(e.logo)
+
+    eliminadas = db.query(Escuderia).filter(Escuderia.activo == False).all()
+    for e in eliminadas:
+        e.logo = convertir_imagen(e.logo)
+
     return templates.TemplateResponse(
         "escuderias.html",
-        {"request": request, "escuderias": escuderias}
+        {
+            "request": request,
+            "escuderias": escuderias,
+            "eliminadas": eliminadas
+        }
     )
 
 
@@ -125,12 +143,22 @@ def eliminar_escuderia(escuderia_id: int, db: Session = Depends(get_db)):
     return RedirectResponse(url="/escuderias/", status_code=303)
 
 
+# Restaurar escudería
+@router.get("/restaurar/{escuderia_id}", response_class=HTMLResponse)
+def restaurar_escuderia(escuderia_id: int, db: Session = Depends(get_db)):
+    esc = db.query(Escuderia).filter(Escuderia.id == escuderia_id, Escuderia.activo == False).first()
+    if esc:
+        esc.activo = True
+        db.commit()
+    return RedirectResponse(url="/escuderias/", status_code=303)
+
+
 @router.get("/eliminados/", response_class=HTMLResponse)
 def listar_eliminadas(request: Request, db: Session = Depends(get_db)):
-    escuderias = db.query(Escuderia).filter(Escuderia.activo == False).all()
-    for e in escuderias:
+    eliminadas = db.query(Escuderia).filter(Escuderia.activo == False).all()
+    for e in eliminadas:
         e.logo = convertir_imagen(e.logo)
     return templates.TemplateResponse(
         "escuderias.html",
-        {"request": request, "escuderias": escuderias, "mensaje": "Listado de escuderías eliminadas"}
+        {"request": request, "escuderias": [], "eliminadas": eliminadas, "mensaje": "Listado de escuderías eliminadas"}
     )

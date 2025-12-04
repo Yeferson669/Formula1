@@ -3,6 +3,7 @@
 {% block content %}
 <h1 class="text-3xl font-bold text-red-500 mb-6">Listado de Pilotos</h1>
 
+<!-- Listado de pilotos activos -->
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for piloto in pilotos %}
         <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
@@ -26,13 +27,47 @@
                 <p class="italic text-gray-400 mb-4"><strong>Escudería:</strong> No asignada</p>
             {% endif %}
 
-            <a href="/pilotos/{{ piloto.id }}"
-               class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
-                Ver detalles
-            </a>
+            <div class="mt-auto flex flex-col space-y-2">
+                <a href="/pilotos/{{ piloto.id }}"
+                   class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
+                    Ver detalles
+                </a>
+                <a href="/pilotos/eliminar/{{ piloto.id }}"
+                   class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded text-center">
+                    Eliminar
+                </a>
+            </div>
         </div>
     {% else %}
         <p class="text-center text-gray-300">No hay pilotos registrados.</p>
+    {% endfor %}
+</div>
+
+<hr class="my-6 border-gray-700">
+
+<!-- Listado de pilotos eliminados -->
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Pilotos eliminados</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for piloto in eliminados %}
+        <div class="bg-gray-800 text-white p-6 rounded-lg shadow-lg flex flex-col">
+            <h2 class="text-xl font-semibold text-gray-300 mb-2">
+                {{ piloto.nombre }} (N° {{ piloto.numero }})
+            </h2>
+
+            <p class="mb-2"><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
+            {% if piloto.escuderia %}
+                <p class="mb-2"><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
+            {% else %}
+                <p class="italic text-gray-400 mb-2"><strong>Escudería:</strong> No asignada</p>
+            {% endif %}
+
+            <a href="/pilotos/restaurar/{{ piloto.id }}"
+               class="mt-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-center">
+                Restaurar
+            </a>
+        </div>
+    {% else %}
+        <p class="text-center text-gray-400">No hay pilotos eliminados.</p>
     {% endfor %}
 </div>
 
