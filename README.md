@@ -1,59 +1,129 @@
-Proyecto F1 Pilotos
+📘 Proyecto FórmulaZ – Aplicación Web con FastAPI
+🚀 Descripción General
+FórmulaZ es una aplicación web desarrollada con FastAPI y SQLAlchemy, diseñada para gestionar información relacionada con escuderías, circuitos y tiempos de carrera de Fórmula 1. El proyecto combina un backend robusto con un frontend moderno y visualmente atractivo, desplegado en Render y conectado a una base de datos PostgreSQL alojada en Clever Cloud.
 
-Proyecto F1 API es un sistema de gestión de información de Fórmula 1 desarrollado con FastAPI, SQLAlchemy y SQLite.  
-Permite administrar **Escuderías, Pilotos, Circuitos, Perfiles y Tiempos, totalmente integrados.
+El objetivo principal es ofrecer una plataforma portable, escalable y segura, con un diseño visual impactante y una infraestructura backend confiable.
 
----
+🛠️ Tecnologías Utilizadas
+Lenguaje: Python 3.10+
 
-Tecnologías principales
+Framework Backend: FastAPI
 
-- **Python 3.10+**
-- **FastAPI**
-- **SQLAlchemy (ORM)**
-- **SQLite (Base de datos local)**
-- **Uvicorn (Servidor ASGI)**
-- **Pydantic (Validación de datos)**
+ORM: SQLAlchemy
 
----
+Base de Datos: PostgreSQL (Clever Cloud)
 
-## 📂 Estructura del proyecto
+Servidor ASGI: Uvicorn
 
-<img width="480" height="184" alt="Screenshot 2025-10-25 2 41 40 AM" src="https://github.com/user-attachments/assets/fcc1225b-8f74-4866-bc6f-7c5e3c82bc0d" />
+Frontend: Jinja2 Templates + HTML/CSS
 
+Despliegue: Render
 
+Control de Versiones: Git + GitHub
 
----
+📂 Estructura del Proyecto
+Código
+Formulaz/
+│── main.py              # Punto de entrada FastAPI
+│── models.py            # Definición de modelos SQLAlchemy
+│── routers/             # Endpoints organizados por módulo
+│   ├── escuderias.py
+│   ├── circuitos.py
+│   └── tiempos.py
+│── templates/           # Vistas HTML con Jinja2
+│   ├── base.html
+│   ├── index.html
+│   ├── circuito_detail.html
+│   ├── tiempo_detail.html
+│   └── error.html
+│── static/              # Archivos CSS, JS, imágenes
+│── requirements.txt     # Dependencias del proyecto
+│── .gitignore           # Exclusiones para Git
+│── README.md            # Documentación
+⚙️ Instalación Local
+Clonar el repositorio
 
-Instalación y ejecución
-
- Clonar el repositorio
 bash
-git clone https://github.com/Yeferson669/Proyecto-f1.git
+git clone https://github.com/Yeferson669/Formulaz.git
+cd Formulaz
+Crear entorno virtual
 
+bash
 python -m venv venv
-source venv/bin/activate      # Linux/Mac
-venv\Scripts\activate         # Windows
-pip install requirements.txt
-fastapi dev
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+Instalar dependencias
 
-**Diagrama entidad-relacion**
+bash
+pip install -r requirements.txt
+Configurar variables de entorno Crear un archivo .env en la raíz del proyecto:
 
-<img width="392" height="322" alt="Screenshot 2025-10-25 2 40 59 AM" src="https://github.com/user-attachments/assets/2675fee1-2576-4fc1-a5bb-dbb67cc95ac5" />
+env
+DATABASE_URL=postgresql://usuario:contraseña@host:puerto/nombre_db
+SECRET_KEY=tu_clave_secreta
+DEBUG=True
+Ejecutar la aplicación
 
+bash
+uvicorn main:app --reload
+🌐 Despliegue en Render
+Build Command:
 
+bash
+pip install -r requirements.txt
+Start Command:
 
+bash
+uvicorn main:app --host=0.0.0.0 --port=10000
+Environment Group:
 
+DATABASE_URL → cadena de conexión de Clever Cloud.
 
-**Edpoints**
+SECRET_KEY → clave secreta para seguridad.
 
-<img width="671" height="343" alt="Screenshot 2025-10-25 2 37 48 AM" src="https://github.com/user-attachments/assets/2f413bd7-5c98-4638-86bb-6fb0929298b6" />
+DEBUG → modo de depuración.
 
+🧪 Ejemplo de Endpoints
+Escuderías
+GET /escuderias/ → Lista todas las escuderías.
 
+GET /escuderias/{id} → Detalle de una escudería.
 
+POST /escuderias/ → Crear nueva escudería.
 
+Circuitos
+GET /circuitos/ → Lista todos los circuitos.
 
+GET /circuitos/{id} → Detalle de un circuito.
 
-**Autor**
-Yeferson David Guaca Buitron
+POST /circuitos/ → Crear nuevo circuito.
+
+Tiempos
+GET /tiempos/ → Lista todos los tiempos registrados.
+
+GET /tiempos/{id} → Detalle de un tiempo.
+
+POST /tiempos/ → Registrar nuevo tiempo.
+
+🎨 Diseño Frontend
+Header y Navbar: colores oscuros con contraste sobre fondo rojo, animaciones claras y modernas.
+
+Templates uniformes: vistas con fondos blancos y recuadros compactos para destacar logos e imágenes.
+
+Animaciones: efectos visuales dinámicos pero profesionales, priorizando la experiencia del usuario.
+
+🔒 Buenas Prácticas Implementadas
+Uso de pools de conexión en SQLAlchemy para evitar fugas.
+
+Separación clara de routers, templates y static.
+
+.gitignore configurado para excluir venv/, __pycache__/ y archivos innecesarios.
+
+Commits limpios y descriptivos para mantener un historial ordenado.
+
+Variables de entorno seguras en Render (sin credenciales en el código).
+
+👨‍💻 Autor
+Yeferson Guaca Desarrollador backend/frontend con experiencia en FastAPI, SQLAlchemy y despliegue en la nube. 📧 Contacto: ydguaca49@ucatolica.edu.co
 
 
