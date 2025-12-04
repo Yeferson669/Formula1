@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-red-500 mb-6">👨‍✈️ Pilotos de Fórmula 1</h1>
+<h1 class="text-3xl font-bold text-red-500 mb-6"> Pilotos de Fórmula </h1>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for piloto in pilotos %}
@@ -10,8 +10,9 @@
                 {{ piloto.nombre }} (N° {{ piloto.numero }})
             </h2>
 
-            {% if piloto.imagen_url %}
-                <img src="/{{ piloto.imagen_url }}" alt="Foto de {{ piloto.nombre }}"
+            {% if piloto.imagen %}
+                <img src="data:image/png;base64,{{ piloto.imagen }}" 
+                     alt="Foto de {{ piloto.nombre }}"
                      class="w-full h-40 object-cover rounded mb-4">
             {% else %}
                 <p class="italic text-gray-400 mb-4">Sin foto disponible</p>

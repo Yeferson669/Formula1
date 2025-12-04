@@ -2,7 +2,9 @@
 
 {% block content %}
 <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold text-blue-400 mb-6">Detalle del Tiempo</h1>
+    <h1 class="text-3xl font-bold text-blue-400 mb-6 text-center tracking-wide">
+        🕒 Detalle del Tiempo
+    </h1>
 
     {% if tiempo %}
         <p class="mb-2"><strong>Piloto:</strong> {{ tiempo.piloto.nombre if tiempo.piloto else "Desconocido" }}</p>
@@ -17,21 +19,22 @@
             <p class="mb-2"><strong>Fecha:</strong> {{ tiempo.fecha }}</p>
         {% endif %}
 
-        {% if tiempo.circuito and tiempo.circuito.imagen_url %}
-            <div class="mt-4">
-                <img src="/{{ tiempo.circuito.imagen_url }}" alt="Imagen del circuito {{ tiempo.circuito.nombre }}"
-                     class="w-full max-w-lg mx-auto rounded-lg shadow-md object-cover">
+        {% if tiempo.circuito and tiempo.circuito.imagen %}
+            <div class="mt-6 bg-white p-2 rounded-md shadow-md w-full max-w-md mx-auto flex items-center justify-center">
+                <img src="data:image/png;base64,{{ tiempo.circuito.imagen }}" 
+                     alt="Imagen del circuito {{ tiempo.circuito.nombre }}"
+                     class="max-h-64 max-w-full object-contain">
             </div>
         {% else %}
-            <p class="italic text-gray-400 mt-4">Sin imagen disponible para este circuito</p>
+            <p class="italic text-gray-400 mt-4 text-center">Sin imagen disponible para este circuito</p>
         {% endif %}
     {% else %}
         <p class="italic text-gray-400">{{ error }}</p>
     {% endif %}
 
-    <div class="text-center mt-6">
+    <div class="text-center mt-8">
         <a href="/tiempos/"
-           class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+           class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow transition">
             ⬅ Volver al listado de tiempos
         </a>
     </div>

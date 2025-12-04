@@ -4,9 +4,12 @@
 <h1 class="text-3xl font-bold text-red-500 mb-6">Escudería: {{ escuderia.nombre }}</h1>
 
 <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-md mx-auto mb-8 text-center">
-    {% if escuderia.logo_url %}
-        <img src="{{ escuderia.logo_url }}" alt="Logo de {{ escuderia.nombre }}"
+    {% if escuderia.logo %}
+        <img src="data:image/png;base64,{{ escuderia.logo }}" 
+             alt="Logo de {{ escuderia.nombre }}"
              class="w-40 h-auto object-contain mx-auto mb-4 rounded">
+    {% else %}
+        <p class="italic text-gray-400 mb-4">Sin logo disponible</p>
     {% endif %}
     <p class="text-sm"><strong>País:</strong> {{ escuderia.pais }}</p>
 </div>
@@ -18,7 +21,7 @@
         <li class="bg-gray-800 p-3 rounded-lg shadow-md">
             <a href="/pilotos/{{ piloto.id }}"
                class="text-red-400 hover:text-red-600 font-semibold">
-                {{ piloto.nombre }} (N° {{ piloto.numero }}) - {{ piloto.pais }}
+                {{ piloto.nombre }} (N° {{ piloto.numero }}) - {{ piloto.nacionalidad }}
             </a>
         </li>
     {% else %}

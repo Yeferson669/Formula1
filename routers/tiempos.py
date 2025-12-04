@@ -1,3 +1,4 @@
+import base64
 from fastapi import APIRouter, Request, Depends, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -20,6 +21,25 @@ def get_db():
         db.close()
 
 # -----------------------------
+# Utilidad: convertir imágenes relacionadas
+# -----------------------------
+def convertir_relaciones(tiempos):
+    for t in tiempos:
+        if t.piloto and t.piloto.imagen:
+            if isinstance(t.piloto.imagen, bytes):
+                t.piloto.imagen = base64.b64encode(t.piloto.imagen).decode("utf-8")
+            else:
+                # si ya es str, lo dejamos tal cual
+                t.piloto.imagen = t.piloto.imagen
+        if t.circuito and t.circuito.imagen:
+            if isinstance(t.circuito.imagen, bytes):
+                t.circuito.imagen = base64.b64encode(t.circuito.imagen).decode("utf-8")
+            else:
+                t.circuito.imagen = t.circuito.imagen
+    return tiempos
+
+
+# -----------------------------
 # READ: Listar todos los tiempos activos
 # -----------------------------
 @router.get("/", response_class=HTMLResponse)
@@ -30,6 +50,8 @@ def get_tiempos(request: Request, db: Session = Depends(get_db)):
         .filter(Tiempo.activo == True)
         .all()
     )
+    tiempos = convertir_relaciones(tiempos)
+
     return templates.TemplateResponse(
         "tiempos_list.html",
         {"request": request, "tiempos": tiempos}
@@ -51,8 +73,9 @@ def get_tiempo_by_id(request: Request, tiempo_id: int, db: Session = Depends(get
             "tiempo_detail.html",
             {"request": request, "error": "Tiempo no encontrado"}
         )
-    
-    # ✅ Pasamos también el circuito al template para mostrar su imagen
+
+    convertir_relaciones([tiempo])
+
     return templates.TemplateResponse(
         "tiempo_detail.html",
         {"request": request, "tiempo": tiempo, "circuito": tiempo.circuito}
@@ -83,7 +106,6 @@ async def create_tiempo(
     if posicion is not None and posicion < 1:
         return templates.TemplateResponse("error.html", {"request": request, "error": "La posición debe ser mayor o igual a 1"})
 
-    # ✅ Convertimos fecha a objeto datetime.date si viene como string
     fecha_obj = None
     if fecha:
         try:
@@ -118,6 +140,8 @@ async def create_tiempo(
         .filter(Tiempo.activo == True)
         .all()
     )
+    tiempos = convertir_relaciones(tiempos)
+
     return templates.TemplateResponse(
         "tiempos_list.html",
         {"request": request, "tiempos": tiempos, "mensaje": "Tiempo registrado correctamente"}
@@ -153,6 +177,8 @@ def update_tiempo(
     db.commit()
     db.refresh(db_tiempo)
 
+    convertir_relaciones([db_tiempo])
+
     return templates.TemplateResponse("tiempo_detail.html", {"request": request, "tiempo": db_tiempo, "circuito": db_tiempo.circuito})
 
 # -----------------------------
@@ -172,6 +198,8 @@ def eliminar_tiempo(request: Request, tiempo_id: int, db: Session = Depends(get_
         .filter(Tiempo.activo == True)
         .all()
     )
+    tiempos = convertir_relaciones(tiempos)
+
     return templates.TemplateResponse(
         "tiempos_list.html",
         {"request": request, "tiempos": tiempos, "mensaje": f"Tiempo con ID {tiempo_id} eliminado"}
@@ -188,6 +216,8 @@ def get_tiempos_eliminados(request: Request, db: Session = Depends(get_db)):
         .filter(Tiempo.activo == False)
         .all()
     )
+    tiempos = convertir_relaciones(tiempos)
+
     return templates.TemplateResponse(
         "tiempos_list.html",
         {"request": request, "tiempos": tiempos}

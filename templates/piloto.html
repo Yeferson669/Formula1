@@ -9,7 +9,16 @@
             <h2 class="text-xl font-semibold text-red-300 mb-2">
                 {{ piloto.nombre }} (N° {{ piloto.numero }})
             </h2>
-            <p class="mb-4"><strong>País:</strong> {{ piloto.pais }}</p>
+
+            {% if piloto.imagen %}
+                <img src="data:image/png;base64,{{ piloto.imagen }}" 
+                     alt="Foto de {{ piloto.nombre }}"
+                     class="w-full h-40 object-cover rounded mb-4">
+            {% else %}
+                <p class="italic text-gray-400 mb-4">Sin foto disponible</p>
+            {% endif %}
+
+            <p class="mb-4"><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
 
             <a href="/pilotos/{{ piloto.id }}"
                class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">

@@ -1,35 +1,59 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-red-400 mb-6">🏎️ Escuderías de Fórmula 1</h1>
+<!-- Fuente personalizada para títulos -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+<style>
+    .titulo-f1 {
+        font-family: 'Orbitron', sans-serif;
+        color: #1f2937; /* gris oscuro */
+        text-shadow:
+            0 0 6px rgba(255, 255, 255, 0.3),
+            0 0 12px rgba(255, 255, 255, 0.2),
+            0 0 20px rgba(255, 255, 255, 0.1);
+    }
+</style>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    {% if escuderias and escuderias|length > 0 %}
-        {% for e in escuderias %}
-            <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-                <h2 class="text-xl font-semibold text-red-300 mb-2">{{ e.nombre }}</h2>
+<div class="max-w-7xl mx-auto px-4 mt-10">
+    <!-- Título principal -->
+    <h1 class="text-5xl font-extrabold mb-10 text-center titulo-f1 animate-pulse tracking-widest">
+        
+    </h1>
 
-                {% if e.logo_url %}
-                    <img src="/{{ e.logo_url }}" alt="Logo de {{ e.nombre }}"
-                         class="w-auto h-24 object-contain rounded mb-4">
-                {% else %}
-                    <p class="italic text-sm text-gray-400 mb-4">Sin logo disponible</p>
-                {% endif %}
+    <!-- Grid de escuderías -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {% if escuderias and escuderias|length > 0 %}
+            {% for e in escuderias %}
+                <div class="bg-gray-900 text-white p-4 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 flex flex-col items-center border border-gray-700">
+                    <h2 class="text-xl font-semibold text-red-400 mb-3 tracking-wide">{{ e.nombre }}</h2>
 
-                <p class="text-sm mb-2"><strong>País:</strong> {{ e.pais if e.pais else "No especificado" }}</p>
+                    {% if e.logo %}
+                        <div class="bg-white p-2 rounded-md shadow-md mb-10 w-40 h-40 flex items-center justify-center">
+                            <img src="data:image/png;base64,{{ e.logo }}" 
+                                 alt="Logo de {{ e.nombre }}"
+                                 class="max-h-24 max-w-full object-contain">
+                        </div>
+                    {% else %}
+                        <p class="italic text-sm text-gray-400 mb-4">Sin logo disponible</p>
+                    {% endif %}
 
-                <a href="/escuderias/{{ e.id }}"
-                   class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                    Ver pilotos
-                </a>
-            </div>
-        {% endfor %}
-    {% else %}
-        {% if busqueda %}
-            <p class="text-center text-gray-300">No se encontraron resultados para "<strong>{{ busqueda }}</strong>".</p>
+                    <p class="text-sm mb-3"><strong>País:</strong> {{ e.pais if e.pais else "No especificado" }}</p>
+
+                    <a href="/escuderias/{{ e.id }}"
+                       class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition">
+                        Ver pilotos
+                    </a>
+                </div>
+            {% endfor %}
         {% else %}
-            <p class="text-center text-gray-300">No hay escuderías registradas.</p>
+            <div class="col-span-full text-center text-gray-300">
+                {% if busqueda %}
+                    <p>No se encontraron resultados para "<strong>{{ busqueda }}</strong>".</p>
+                {% else %}
+                    <p>No hay escuderías registradas.</p>
+                {% endif %}
+            </div>
         {% endif %}
-    {% endif %}
+    </div>
 </div>
 {% endblock %}

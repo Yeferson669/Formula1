@@ -2,23 +2,33 @@
 
 {% block content %}
 <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
-    <h1 class="text-2xl font-bold text-blue-400 mb-6">Circuito: {{ circuito.nombre }}</h1>
+    <h1 class="text-3xl font-bold text-blue-400 mb-6 text-center tracking-wide">
+        Circuito: {{ circuito.nombre }}
+    </h1>
 
-    {% if circuito.imagen_url %}
-        <img src="/{{ circuito.imagen_url }}" alt="Imagen de {{ circuito.nombre }}"
-             class="w-full max-w-lg mx-auto rounded-lg shadow-md mb-6 object-cover">
+    {% if circuito.imagen %}
+        <div class="bg-white p-2 rounded-md shadow-md mb-6 w-full max-w-md mx-auto flex items-center justify-center">
+            <img src="data:image/png;base64,{{ circuito.imagen }}" 
+                 alt="Imagen de {{ circuito.nombre }}"
+                 class="max-h-64 max-w-full object-contain">
+        </div>
     {% else %}
-        <p class="italic text-gray-400 mb-6">Sin imagen disponible</p>
+        <p class="italic text-gray-400 mb-6 text-center">Sin imagen disponible</p>
     {% endif %}
 
-    <p class="mb-2"><strong>País:</strong> {{ circuito.pais }}</p>
-    {% if circuito.longitud_km %}
-        <p class="mb-2"><strong>Longitud:</strong> {{ circuito.longitud_km }} km</p>
-    {% endif %}
+    <div class="text-sm leading-relaxed space-y-2">
+        <p><strong>País:</strong> {{ circuito.pais }}</p>
+        {% if circuito.longitud_km %}
+            <p><strong>Longitud:</strong> {{ circuito.longitud_km }} km</p>
+        {% endif %}
+        {% if circuito.descripcion %}
+            <p><strong>Descripción:</strong> {{ circuito.descripcion }}</p>
+        {% endif %}
+    </div>
 
-    <div class="mt-6 text-center">
+    <div class="mt-8 text-center">
         <a href="/circuitos/"
-           class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
+           class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded shadow transition">
             ⬅ Volver al listado de circuitos
         </a>
     </div>

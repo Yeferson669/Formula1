@@ -1,47 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-red-500 mb-8">📊 Dashboard de Fórmula 1</h1>
+<div class="max-w-7xl mx-auto px-6 mt-10">
+    <!-- Título principal -->
+    <h1 class="text-4xl font-extrabold text-center text-red-600 mb-10 tracking-wide">
+        📊 Dashboard Fórmula 1
+    </h1>
 
-<!-- Pilotos por escudería -->
-<section class="mb-8">
-    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pilotos por escudería</h2>
-    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
-        <canvas id="pilotosPorEscuderia"></canvas>
-    </div>
-</section>
+    <!-- Pilotos por escudería -->
+    <section class="mb-8">
+        <h2 class="text-lg font-semibold text-red-500 mb-3">Pilotos por escudería</h2>
+        <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+            <canvas id="pilotosPorEscuderia"></canvas>
+        </div>
+    </section>
 
-<!-- Tiempos promedio por circuito -->
-<section class="mb-8">
-    <h2 class="text-xl font-semibold text-gray-200 mb-4">Tiempos promedio por circuito</h2>
-    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
-        <canvas id="tiemposPorCircuito"></canvas>
-    </div>
-</section>
+    <!-- Tiempos promedio por circuito -->
+    <section class="mb-8">
+        <h2 class="text-lg font-semibold text-red-500 mb-3">Tiempos promedio por circuito</h2>
+        <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+            <canvas id="tiemposPorCircuito"></canvas>
+        </div>
+    </section>
 
-<!-- Pilotos por nacionalidad -->
-<section class="mb-8">
-    <h2 class="text-xl font-semibold text-gray-200 mb-4">Pilotos por nacionalidad</h2>
-    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
-        <canvas id="pilotosPorNacionalidad"></canvas>
-    </div>
-</section>
+    <!-- Pilotos por nacionalidad -->
+    <section class="mb-8">
+        <h2 class="text-lg font-semibold text-red-500 mb-3">Pilotos por nacionalidad</h2>
+        <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+            <canvas id="pilotosPorNacionalidad"></canvas>
+        </div>
+    </section>
 
-<!-- Escuderías activas vs eliminadas -->
-<section class="mb-8">
-    <h2 class="text-xl font-semibold text-gray-200 mb-4">Estado de escuderías</h2>
-    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
-        <canvas id="escuderiasStatus"></canvas>
-    </div>
-</section>
+    <!-- Escuderías activas vs eliminadas -->
+    <section class="mb-8">
+        <h2 class="text-lg font-semibold text-red-500 mb-3">Estado de escuderías</h2>
+        <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+            <canvas id="escuderiasStatus"></canvas>
+        </div>
+    </section>
 
-<!-- Longitud de circuitos -->
-<section class="mb-8">
-    <h2 class="text-xl font-semibold text-gray-200 mb-4">Longitudes de circuitos</h2>
-    <div class="bg-gray-900 p-4 rounded-lg shadow-lg">
-        <canvas id="longitudesCircuitos"></canvas>
-    </div>
-</section>
+    <!-- Longitud de circuitos -->
+    <section class="mb-8">
+        <h2 class="text-lg font-semibold text-red-500 mb-3">Longitudes de circuitos</h2>
+        <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+            <canvas id="longitudesCircuitos"></canvas>
+        </div>
+    </section>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

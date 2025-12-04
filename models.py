@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Float, Table
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Float, Table, LargeBinary
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -18,7 +18,11 @@ class Escuderia(Base):
     nombre = Column(String(50), unique=True, index=True, nullable=False)
     pais = Column(String(50), nullable=False)
     activo = Column(Boolean, default=True)
+
+    # 🔹 Antes: solo URL
     logo_url = Column(String(255), nullable=True)
+    # 🔹 Nuevo: binario
+    logo = Column(LargeBinary, nullable=True)
 
     pilotos = relationship("Piloto", back_populates="escuderia")
 
@@ -38,8 +42,10 @@ class Piloto(Base):
     biografia = Column(String(500), nullable=True)
     twitter = Column(String(50), nullable=True)
 
-    # 🔹 Nuevo campo para imagen del piloto
+    # 🔹 Antes: solo URL
     imagen_url = Column(String(255), nullable=True)
+    # 🔹 Nuevo: binario
+    imagen = Column(LargeBinary, nullable=True)
 
     escuderia = relationship("Escuderia", back_populates="pilotos")
     circuitos = relationship("Circuito", secondary=piloto_circuito, back_populates="pilotos")
@@ -54,9 +60,13 @@ class Circuito(Base):
     pais = Column(String(50), nullable=False)
     longitud_km = Column(Float, nullable=True)  # mejor Float para km
     activo = Column(Boolean, default=True)
-    imagen_url = Column(String(255), nullable=True)
-    descripcion = Column(String, nullable=True)
 
+    # 🔹 Antes: solo URL
+    imagen_url = Column(String(255), nullable=True)
+    # 🔹 Nuevo: binario
+    imagen = Column(LargeBinary, nullable=True)
+
+    descripcion = Column(String, nullable=True)
 
     pilotos = relationship("Piloto", secondary=piloto_circuito, back_populates="circuitos")
     tiempos = relationship("Tiempo", back_populates="circuito")

@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="text-3xl font-bold text-blue-400 mb-6">🛣️ Circuitos de Fórmula 1</h1>
+<h1 class="text-3xl font-bold text-blue-400 mb-6"> Circuitos de Fórmula </h1>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for c in circuitos %}
         <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
             <h2 class="text-xl font-semibold text-blue-300 mb-2">{{ c.nombre }}</h2>
 
-            {% if c.imagen_url %}
-                <img src="/{{ c.imagen_url }}" alt="Imagen de {{ c.nombre }}"
+            {% if c.imagen %}
+                <img src="data:image/png;base64,{{ c.imagen }}" 
+                     alt="Imagen de {{ c.nombre }}"
                      class="w-full h-40 object-cover rounded mb-4">
             {% else %}
                 <p class="italic text-gray-400 mb-4">Sin imagen disponible</p>
@@ -22,7 +23,7 @@
             {% endif %}
 
             {% if c.descripcion %}
-                <p class="mb-4 text-sm"><strong>Biografía:</strong> {{ c.descripcion }}</p>
+                <p class="mb-4 text-sm"><strong>Descripción:</strong> {{ c.descripcion }}</p>
             {% else %}
                 <p class="italic text-gray-400 mb-4">No hay información disponible</p>
             {% endif %}

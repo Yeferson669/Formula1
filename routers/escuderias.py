@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Request, Depends, Form, File, UploadFile
+import base64
+from fastapi import APIRouter, Request, Depends, Form, UploadFile, File
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from database import SessionLocal
 from models import Escuderia, Piloto
-import shutil, os
 
 router = APIRouter(prefix="/escuderias", tags=["Escuderías"])
 templates = Jinja2Templates(directory="templates")
@@ -20,7 +20,13 @@ def get_db():
         db.close()
 
 # -----------------------------
-# READ: Buscar escuderías por nombre (debe ir antes de /{id})
+# Utilidad: convertir binario a base64
+# -----------------------------
+def convertir_imagen(binario):
+    return base64.b64encode(binario).decode("utf-8") if binario else None
+
+# -----------------------------
+# READ: Buscar escuderías por nombre
 # -----------------------------
 @router.get("/buscar", response_class=HTMLResponse)
 def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(get_db)):
@@ -28,6 +34,9 @@ def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(
         escuderias = db.query(Escuderia).filter(Escuderia.nombre.ilike(f"%{nombre}%"), Escuderia.activo == True).all()
     else:
         escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
+
+    for e in escuderias:
+        e.logo = convertir_imagen(e.logo)
 
     return templates.TemplateResponse(
         "index.html",
@@ -40,6 +49,10 @@ def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(
 @router.get("/", response_class=HTMLResponse)
 def get_escuderias(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
+
+    for e in escuderias:
+        e.logo = convertir_imagen(e.logo)
+
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "escuderias": escuderias}
@@ -56,14 +69,20 @@ def get_escuderia_by_id(request: Request, escuderia_id: int, db: Session = Depen
             "team.html",
             {"request": request, "team": None, "pilotos": [], "error": "Escudería no encontrada"}
         )
+
+    esc.logo = convertir_imagen(esc.logo)
+
     pilotos = db.query(Piloto).filter(Piloto.escuderia_id == esc.id).all()
+    for p in pilotos:
+        p.imagen = convertir_imagen(p.imagen)
+
     return templates.TemplateResponse(
         "team.html",
         {"request": request, "team": esc, "pilotos": pilotos}
     )
 
 # -----------------------------
-# CREATE: Crear escudería (formulario con logo)
+# CREATE: Crear escudería (con archivo binario)
 # -----------------------------
 @router.post("/", response_class=HTMLResponse)
 async def create_escuderia(
@@ -80,19 +99,14 @@ async def create_escuderia(
             {"request": request, "error": "Ya existe una escudería con ese nombre"}
         )
 
-    logo_url = None
+    logo_binario = None
     if logo:
-        upload_dir = "static/uploads"
-        os.makedirs(upload_dir, exist_ok=True)
-        file_location = os.path.join(upload_dir, logo.filename)
-        with open(file_location, "wb") as buffer:
-            shutil.copyfileobj(logo.file, buffer)
-        logo_url = file_location
+        logo_binario = await logo.read()
 
     db_esc = Escuderia(
         nombre=nombre,
         pais=pais,
-        logo_url=logo_url,
+        logo=logo_binario,
         activo=True
     )
     db.add(db_esc)
@@ -100,16 +114,26 @@ async def create_escuderia(
     db.refresh(db_esc)
 
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
+    for e in escuderias:
+        e.logo = convertir_imagen(e.logo)
+
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "escuderias": escuderias}
     )
 
 # -----------------------------
-# UPDATE: Editar escudería
+# UPDATE: Editar escudería (con archivo binario)
 # -----------------------------
 @router.post("/editar/{escuderia_id}", response_class=HTMLResponse)
-def update_escuderia(request: Request, escuderia_id: int, nombre: str = Form(...), pais: str = Form(...), db: Session = Depends(get_db)):
+async def update_escuderia(
+    request: Request,
+    escuderia_id: int,
+    nombre: str = Form(...),
+    pais: str = Form(...),
+    logo: UploadFile = File(None),
+    db: Session = Depends(get_db)
+):
     db_esc = db.query(Escuderia).filter(Escuderia.id == escuderia_id, Escuderia.activo == True).first()
     if not db_esc:
         return templates.TemplateResponse(
@@ -119,10 +143,19 @@ def update_escuderia(request: Request, escuderia_id: int, nombre: str = Form(...
 
     db_esc.nombre = nombre
     db_esc.pais = pais
+
+    if logo:
+        db_esc.logo = await logo.read()
+
     db.commit()
     db.refresh(db_esc)
 
+    db_esc.logo = convertir_imagen(db_esc.logo)
+
     pilotos = db.query(Piloto).filter(Piloto.escuderia_id == db_esc.id).all()
+    for p in pilotos:
+        p.imagen = convertir_imagen(p.imagen)
+
     return templates.TemplateResponse(
         "team.html",
         {"request": request, "team": db_esc, "pilotos": pilotos}
@@ -143,6 +176,9 @@ def eliminar_escuderia(request: Request, escuderia_id: int, db: Session = Depend
     db.commit()
 
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
+    for e in escuderias:
+        e.logo = convertir_imagen(e.logo)
+
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "escuderias": escuderias, "mensaje": f"Escudería {esc.nombre} fue eliminada"}
@@ -154,6 +190,10 @@ def eliminar_escuderia(request: Request, escuderia_id: int, db: Session = Depend
 @router.get("/eliminados/", response_class=HTMLResponse)
 def get_eliminadas(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == False).all()
+
+    for e in escuderias:
+        e.logo = convertir_imagen(e.logo)
+
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "escuderias": escuderias}

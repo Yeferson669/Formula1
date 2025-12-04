@@ -7,8 +7,11 @@
 
     <!-- Imagen del piloto -->
     {% if piloto.imagen %}
-        <img src="{{ piloto.imagen }}" alt="Foto de {{ piloto.nombre }}"
+        <img src="data:image/png;base64,{{ piloto.imagen }}" 
+             alt="Foto de {{ piloto.nombre }}"
              class="w-48 h-48 object-cover rounded-lg shadow-md mx-auto mb-6">
+    {% else %}
+        <p class="italic text-gray-400 mb-6 text-center">Sin foto disponible</p>
     {% endif %}
 
     <!-- Información del piloto -->
@@ -19,12 +22,15 @@
         <p><strong>Equipo:</strong> {{ piloto.escuderia.nombre }}</p>
         <p><strong>Victorias:</strong> {{ piloto.victorias }}</p>
 
-        {% if piloto.escuderia.logo_url %}
+        {% if piloto.escuderia.logo %}
             <div class="mt-4">
                 <p><strong>Logo Escudería:</strong></p>
-                <img src="{{ piloto.escuderia.logo_url }}" alt="Logo {{ piloto.escuderia.nombre }}"
+                <img src="data:image/png;base64,{{ piloto.escuderia.logo }}" 
+                     alt="Logo {{ piloto.escuderia.nombre }}"
                      class="w-32 h-auto object-contain rounded mx-auto mt-2">
             </div>
+        {% else %}
+            <p class="italic text-gray-400 mt-4">Sin logo de escudería disponible</p>
         {% endif %}
     </div>
 
