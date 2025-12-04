@@ -1,132 +1,144 @@
-🏁 Fórmula! – Aplicación Web con FastAPI
+# 🏎️ Proyecto Fórmula 1 - Gestión de Pilotos, Escuderías, Circuitos y Tiempos
 
-Descripción General
+Este proyecto es una aplicación web desarrollada con **FastAPI + SQLAlchemy + Jinja2** que permite gestionar información de **pilotos, escuderías, circuitos y tiempos de carrera**.  
+Incluye funcionalidades de creación, edición, eliminación lógica (soft delete) y restauración de registros, además de formularios y vistas dinámicas.
 
-Fórmula1 es una aplicación web desarrollada con FastAPI, diseñada para gestionar información sobre escuderías, circuitos y tiempos de carrera de Fórmula 1. El proyecto combina un backend robusto con un frontend moderno y visualmente atractivo, desplegado en Render y conectado a una base de datos PostgreSQL alojada en Clever Cloud.
+---
 
-El objetivo principal es ofrecer una plataforma portable, escalable y segura, con un diseño visual impactante y una infraestructura backend confiable.
+## 📐 Diagrama de Clases
 
-🛠️ Tecnologías Utilizadas
-Lenguaje: Python 3.10+
+```mermaid
+classDiagram
+    Piloto --> Escuderia : pertenece
+    Tiempo --> Piloto : registrado por
+    Tiempo --> Circuito : realizado en
+    Escuderia --> Piloto : tiene (máx 2)
+    Circuito --> Tiempo : acumula
 
-Framework Backend: FastAPI
 
-ORM: SQLAlchemy
+## 🔄 Diagrama de Actividades
+flowchart TD
+    A[Usuario] --> B[Formulario creación]
+    B --> C[Validación datos]
+    C -->|Correcto| D[Guardar en BD]
+    C -->|Error| E[Mostrar mensaje]
+    D --> F[Listado activo]
+    F --> G[Eliminar registro]
+    G --> H[Marcar activo=False]
+    H --> I[Listado eliminados]
+    I --> J[Restaurar registro]
+    J --> F
 
-Base de Datos: PostgreSQL (Clever Cloud)
 
-Servidor ASGI: Uvicorn
+## 🗂️ Modelos
+Piloto: relación con Escudería (máx 2 pilotos activos por escudería).
 
-Frontend: Jinja2 Templates + HTML/CSS
+Escudería: relación con Pilotos.
 
-Despliegue: Render
+Circuito: relación con Tiempos.
 
-Control de Versiones: Git + GitHub
+Tiempo: relación con Piloto y Circuito, guarda tiempo en segundos pero se muestra en formato MM:SS.mmm.
 
-📁 Estructura del Proyecto
-Archivos principales:
 
-main.py: Punto de entrada de la aplicación FastAPI.
+## 🚀 Despliegue
 
-models.py: Definición de modelos SQLAlchemy.
+Clonar repositorio: git clone https://github.com/usuario/proyecto-f1.git
+cd proyecto-f1
 
-requirements.txt: Lista de dependencias del proyecto.
+Crear entorno virtual e instalar dependencias:python -m venv venv
+source venv/bin/activate   # Linux/Mac
+venv\Scripts\activate      # Windows
+pip install -r requirements.txt
 
-.gitignore: Exclusiones para Git (venv, pycache, etc.).
+Ejecutar servidor:uvicorn main:app --reload
 
-README.md: Documentación del proyecto.
+##  🌐 Endpoints principales
+    ##Pilotos
+GET /pilotos/ → Listado + formulario + eliminados
 
-Carpetas clave:
+POST /pilotos/crear/ → Crear piloto
 
-routers/: Contiene los endpoints organizados por módulo.
+POST /pilotos/editar/{id} → Editar piloto
 
-escuderias.py: CRUD para escuderías.
+GET /pilotos/eliminar/{id} → Eliminar (soft delete)
 
-circuitos.py: CRUD para circuitos.
+GET /pilotos/restaurar/{id} → Restaurar
 
-tiempos.py: CRUD para tiempos de carrera.
-
-templates/: Vistas HTML renderizadas con Jinja2.
-
-base.html: Template base con navbar y estilos globales.
-
-index.html: Página principal.
-
-circuito_detail.html: Detalle de circuito.
-
-tiempo_detail.html: Detalle de tiempo.
-
-error.html: Página de error personalizada.
-
-static/: Archivos estáticos como CSS, JS e imágenes.
-
-⚙️ Instalación Local
-Clonar el repositorio desde GitHub.
-
-Crear y activar un entorno virtual.
-
-Instalar las dependencias listadas en requirements.txt..
-
-Configurar las variables de entorno en un archivo .env con la cadena de conexión a PostgreSQL, clave secreta y modo debug.
-
-Ejecutar la aplicación con Uvicorn en modo desarrollo.
-
-🌐 Despliegue en Render
-Build Command: pip install -r requirements.txt
-
-Start Command: uvicorn main:app --host=0.0.0.0 --port=10000
-
-Variables de entorno configuradas en Render:
-
-DATABASE_URL → cadena de conexión de Clever Cloud.
-
-SECRET_KEY → clave secreta para seguridad.
-
-DEBUG → modo de depuración.
-
-🧪 Endpoints Disponibles
 Escuderías
+GET /escuderias/ → Listado + formulario + eliminadas
 
-GET /escuderias/ → Lista todas las escuderías.
+POST /escuderias/crear/ → Crear escudería
 
-GET /escuderias/{id} → Detalle de una escudería.
+POST /escuderias/editar/{id} → Editar escudería
 
-POST /escuderias/ → Crear nueva escudería.
+GET /escuderias/eliminar/{id} → Eliminar
+
+GET /escuderias/restaurar/{id} → Restaurar
 
 Circuitos
+GET /circuitos/ → Listado + formulario + eliminados
 
-GET /circuitos/ → Lista todos los circuitos.
+POST /circuitos/crear/ → Crear circuito
 
-GET /circuitos/{id} → Detalle de un circuito.
+POST /circuitos/editar/{id} → Editar circuito
 
-POST /circuitos/ → Crear nuevo circuito.
+GET /circuitos/eliminar/{id} → Eliminar
+
+GET /circuitos/restaurar/{id} → Restaurar
 
 Tiempos
+GET /tiempos/ → Listado + formulario + eliminados
 
-GET /tiempos/ → Lista todos los tiempos registrados.
+POST /tiempos/crear/ → Crear tiempo
 
-GET /tiempos/{id} → Detalle de un tiempo.
+POST /tiempos/editar/{id} → Editar tiempo
 
-POST /tiempos/ → Registrar nuevo tiempo.
+GET /tiempos/eliminar/{id} → Eliminar
 
-🎨 Diseño Frontend
-Header y Navbar: colores oscuros con contraste sobre fondo rojo, animaciones claras y modernas.
+GET /tiempos/restaurar/{id} → Restaurar
 
-Templates uniformes: vistas con fondos blancos y recuadros compactos para destacar logos e imágenes.
+Formato de tiempo: se guarda en segundos pero se muestra como MM:SS.mmm.
 
-Animaciones: efectos visuales dinámicos pero profesionales, priorizando la experiencia del usuario.
+🛠️ Tecnologías usadas
+Backend
 
-🔒 Buenas Prácticas Implementadas
-Uso de pools de conexión en SQLAlchemy para evitar fugas.
+FastAPI → Framework principal para construir la API y manejar rutas.
 
-Separación clara de routers, templates y static.
+SQLAlchemy → ORM para manejar modelos y consultas a la base de datos.
 
-.gitignore configurado para excluir venv, pycache y archivos innecesarios.
+PostgreSQL → Base de datos relacional usada para almacenar pilotos, escuderías, circuitos y tiempos.
 
-Commits limpios y descriptivos para mantener un historial ordenado.
+Frontend
 
-Variables de entorno seguras en Render (sin credenciales en el código).
+Jinja2 → Motor de plantillas para renderizar HTML dinámico.
 
-👨‍💻 Autor
-Yeferson Guaca
+TailwindCSS → Framework CSS para estilos modernos y responsivos.
 
+Infraestructura
+
+Uvicorn → Servidor ASGI para correr la aplicación FastAPI.
+
+Python 3.10+ → Lenguaje de programación base del proyecto.
+
+Extras
+
+Soft delete + restauración → Implementado en todos los modelos para trazabilidad.
+
+Conversión de imágenes a Base64 → Para mostrar logos y fotos en las vistas.
+
+Formato de tiempos → Conversión de segundos a MM:SS.mmm para mostrar tiempos de vuelta.
+
+
+
+#🎯 Conclusión#
+Este proyecto demuestra cómo construir una aplicación web robusta, escalable y clara con FastAPI, aplicando buenas prácticas de:
+
+Soft delete + restauración
+
+Uniformidad de rutas y templates
+
+Conversión de datos (tiempos formateados)
+
+Frontend limpio con TailwindCSS
+
+👨‍💻 Autor: Yeferson David Guaca Buitron
