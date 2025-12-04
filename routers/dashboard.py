@@ -19,12 +19,12 @@ def get_db():
 
 @router.get("/dashboard", include_in_schema=False)
 def dashboard(request: Request, db: Session = Depends(get_db)):
-    # Pilotos por escudería
+    
     escuderias = db.query(Escuderia).all()
     esc_labels = [e.nombre for e in escuderias if e.activo]
     pilotos_count = [db.query(Piloto).filter(Piloto.escuderia_id == e.id, Piloto.activo == True).count() for e in escuderias if e.activo]
 
-    # Tiempos promedio por circuito
+   
     circuitos = db.query(Circuito).all()
     circ_labels = [c.nombre for c in circuitos if c.activo]
     tiempos_promedio = []
@@ -32,15 +32,15 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
         tiempos = db.query(Tiempo).filter(Tiempo.circuito_id == c.id, Tiempo.activo == True).all()
         tiempos_promedio.append(round(sum([t.tiempo_vuelta for t in tiempos]) / len(tiempos), 2) if tiempos else 0)
 
-    # Pilotos por nacionalidad
+    
     nacionalidades = [p.nacionalidad for p in db.query(Piloto).filter(Piloto.activo == True).all()]
     nacionalidades_count = Counter(nacionalidades)
 
-    # Escuderías activas vs eliminadas
+    
     escuderias_activas = db.query(Escuderia).filter(Escuderia.activo == True).count()
     escuderias_inactivas = db.query(Escuderia).filter(Escuderia.activo == False).count()
 
-    # Longitud de circuitos
+    
     longitudes = [c.longitud_km for c in db.query(Circuito).filter(Circuito.activo == True, Circuito.longitud_km != None).all()]
 
     return templates.TemplateResponse("dashboard.html", {

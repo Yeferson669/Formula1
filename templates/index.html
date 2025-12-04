@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Fuente personalizada para títulos -->
+
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
 <style>
     .titulo-f1 {
         font-family: 'Orbitron', sans-serif;
-        color: #1f2937; /* gris oscuro */
+        color: #1f2937; 
         text-shadow:
             0 0 6px rgba(255, 255, 255, 0.3),
             0 0 12px rgba(255, 255, 255, 0.2),
@@ -15,12 +15,12 @@
 </style>
 
 <div class="max-w-7xl mx-auto px-4 mt-10">
-    <!-- Título principal -->
+    
     <h1 class="text-5xl font-extrabold mb-10 text-center titulo-f1 animate-pulse tracking-widest">
         
     </h1>
 
-    <!-- Grid de escuderías -->
+    
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {% if escuderias and escuderias|length > 0 %}
             {% for e in escuderias %}

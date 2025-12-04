@@ -2,10 +2,10 @@
 
 {% block content %}
 <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
-    <!-- Nombre del piloto -->
+    
     <h1 class="text-3xl font-bold text-red-400 mb-6">Piloto: {{ piloto.nombre }}</h1>
 
-    <!-- Imagen del piloto -->
+    
     {% if piloto.imagen %}
         <img src="data:image/png;base64,{{ piloto.imagen }}" 
              alt="Foto de {{ piloto.nombre }}"
@@ -14,7 +14,7 @@
         <p class="italic text-gray-400 mb-6 text-center">Sin foto disponible</p>
     {% endif %}
 
-    <!-- Información del piloto -->
+    
     <div class="space-y-2 text-sm">
         <p><strong>Número:</strong> {{ piloto.numero }}</p>
         <p><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
@@ -43,7 +43,7 @@
         {% endif %}
     </div>
 
-    <!-- Volver -->
+    
     <div class="text-center mt-6">
         {% if piloto.escuderia %}
             <a href="/teams/team/{{ piloto.escuderia.nombre }}"

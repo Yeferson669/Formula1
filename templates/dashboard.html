@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-6 mt-10">
-    <!-- Título principal -->
+    
     <h1 class="text-4xl font-extrabold text-center text-red-600 mb-10 tracking-wide">
-        📊 Dashboard Fórmula 1
+        Dashboard Fórmula 1
     </h1>
 
-    <!-- Pilotos por escudería -->
+    
     <section class="mb-8">
         <h2 class="text-lg font-semibold text-red-500 mb-3">Pilotos por escudería</h2>
         <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
@@ -15,7 +15,7 @@
         </div>
     </section>
 
-    <!-- Tiempos promedio por circuito -->
+    
     <section class="mb-8">
         <h2 class="text-lg font-semibold text-red-500 mb-3">Tiempos promedio por circuito</h2>
         <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
@@ -23,7 +23,7 @@
         </div>
     </section>
 
-    <!-- Pilotos por nacionalidad -->
+    
     <section class="mb-8">
         <h2 class="text-lg font-semibold text-red-500 mb-3">Pilotos por nacionalidad</h2>
         <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
@@ -31,7 +31,7 @@
         </div>
     </section>
 
-    <!-- Escuderías activas vs eliminadas -->
+    
     <section class="mb-8">
         <h2 class="text-lg font-semibold text-red-500 mb-3">Estado de escuderías</h2>
         <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
@@ -39,7 +39,7 @@
         </div>
     </section>
 
-    <!-- Longitud de circuitos -->
+    
     <section class="mb-8">
         <h2 class="text-lg font-semibold text-red-500 mb-3">Longitudes de circuitos</h2>
         <div class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
@@ -50,7 +50,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // ✅ Tu lógica de Chart.js se mantiene exactamente igual
+    
     const escuderias = {{ escuderias | safe }};
     const pilotos_count = {{ pilotos_count | safe }};
     const circuitos = {{ circuitos | safe }};
@@ -61,7 +61,7 @@
     const escuderias_status_data = {{ escuderias_status_data | safe }};
     const longitudes = {{ longitudes | safe }};
 
-    // Pilotos por escudería
+    
     new Chart(document.getElementById('pilotosPorEscuderia'), {
         type: 'bar',
         data: {
@@ -75,7 +75,7 @@
         options: { responsive: true, plugins: { legend: { display: false } } }
     });
 
-    // Tiempos promedio por circuito
+    
     new Chart(document.getElementById('tiemposPorCircuito'), {
         type: 'line',
         data: {
@@ -91,7 +91,7 @@
         options: { responsive: true }
     });
 
-    // Pilotos por nacionalidad
+    
     new Chart(document.getElementById('pilotosPorNacionalidad'), {
         type: 'pie',
         data: {
@@ -104,7 +104,7 @@
         options: { responsive: true }
     });
 
-    // Escuderías activas vs eliminadas
+    
     new Chart(document.getElementById('escuderiasStatus'), {
         type: 'doughnut',
         data: {
@@ -117,7 +117,7 @@
         options: { responsive: true }
     });
 
-    // Longitud de circuitos
+    
     new Chart(document.getElementById('longitudesCircuitos'), {
         type: 'bar',
         data: {

@@ -9,9 +9,7 @@ from models import Circuito
 router = APIRouter(prefix="/circuitos", tags=["Circuitos"])
 templates = Jinja2Templates(directory="templates")
 
-# -----------------------------
-# Dependencia de sesión
-# -----------------------------
+
 def get_db():
     db = SessionLocal()
     try:
@@ -19,15 +17,11 @@ def get_db():
     finally:
         db.close()
 
-# -----------------------------
-# Utilidad: convertir binario a base64
-# -----------------------------
+
 def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
-# -----------------------------
-# READ: Listar todos los circuitos activos
-# -----------------------------
+
 @router.get("/", response_class=HTMLResponse)
 def get_circuitos(request: Request, db: Session = Depends(get_db)):
     circuitos = db.query(Circuito).filter(Circuito.activo == True).all()
@@ -40,9 +34,7 @@ def get_circuitos(request: Request, db: Session = Depends(get_db)):
         {"request": request, "circuitos": circuitos}
     )
 
-# -----------------------------
-# READ: Detalle de circuito por ID
-# -----------------------------
+
 @router.get("/{circuito_id}", response_class=HTMLResponse)
 def get_circuito_by_id(request: Request, circuito_id: int, db: Session = Depends(get_db)):
     circuito = db.query(Circuito).filter(Circuito.id == circuito_id, Circuito.activo == True).first()
@@ -59,9 +51,7 @@ def get_circuito_by_id(request: Request, circuito_id: int, db: Session = Depends
         {"request": request, "circuito": circuito}
     )
 
-# -----------------------------
-# CREATE: Crear circuito (con archivo binario)
-# -----------------------------
+
 @router.post("/", response_class=HTMLResponse)
 async def create_circuito(
     request: Request,
@@ -101,9 +91,7 @@ async def create_circuito(
         {"request": request, "circuitos": circuitos, "mensaje": f"Circuito {db_circuito.nombre} creado exitosamente"}
     )
 
-# -----------------------------
-# UPDATE: Editar circuito (con archivo binario)
-# -----------------------------
+
 @router.post("/editar/{circuito_id}", response_class=HTMLResponse)
 async def update_circuito(
     request: Request,

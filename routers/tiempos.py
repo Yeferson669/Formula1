@@ -10,9 +10,7 @@ import datetime
 router = APIRouter(prefix="/tiempos", tags=["Tiempos"])
 templates = Jinja2Templates(directory="templates")
 
-# -----------------------------
-# Dependencia de sesión
-# -----------------------------
+
 def get_db():
     db = SessionLocal()
     try:
@@ -20,9 +18,7 @@ def get_db():
     finally:
         db.close()
 
-# -----------------------------
-# Utilidad: convertir imágenes relacionadas
-# -----------------------------
+
 def convertir_relaciones(tiempos):
     for t in tiempos:
         if t.piloto and t.piloto.imagen:
@@ -39,9 +35,7 @@ def convertir_relaciones(tiempos):
     return tiempos
 
 
-# -----------------------------
-# READ: Listar todos los tiempos activos
-# -----------------------------
+
 @router.get("/", response_class=HTMLResponse)
 def get_tiempos(request: Request, db: Session = Depends(get_db)):
     tiempos = (
@@ -57,9 +51,7 @@ def get_tiempos(request: Request, db: Session = Depends(get_db)):
         {"request": request, "tiempos": tiempos}
     )
 
-# -----------------------------
-# READ: Detalle de tiempo por ID
-# -----------------------------
+
 @router.get("/{tiempo_id}", response_class=HTMLResponse)
 def get_tiempo_by_id(request: Request, tiempo_id: int, db: Session = Depends(get_db)):
     tiempo = (
@@ -81,9 +73,7 @@ def get_tiempo_by_id(request: Request, tiempo_id: int, db: Session = Depends(get
         {"request": request, "tiempo": tiempo, "circuito": tiempo.circuito}
     )
 
-# -----------------------------
-# CREATE: Crear tiempo (formulario)
-# -----------------------------
+
 @router.post("/", response_class=HTMLResponse)
 async def create_tiempo(
     request: Request,
@@ -147,9 +137,7 @@ async def create_tiempo(
         {"request": request, "tiempos": tiempos, "mensaje": "Tiempo registrado correctamente"}
     )
 
-# -----------------------------
-# UPDATE: Editar tiempo
-# -----------------------------
+
 @router.post("/editar/{tiempo_id}", response_class=HTMLResponse)
 def update_tiempo(
     request: Request,
@@ -181,9 +169,7 @@ def update_tiempo(
 
     return templates.TemplateResponse("tiempo_detail.html", {"request": request, "tiempo": db_tiempo, "circuito": db_tiempo.circuito})
 
-# -----------------------------
-# DELETE: Marcar tiempo como inactivo
-# -----------------------------
+
 @router.get("/eliminar/{tiempo_id}", response_class=HTMLResponse)
 def eliminar_tiempo(request: Request, tiempo_id: int, db: Session = Depends(get_db)):
     tiempo = db.query(Tiempo).filter(Tiempo.id == tiempo_id).first()
@@ -205,9 +191,7 @@ def eliminar_tiempo(request: Request, tiempo_id: int, db: Session = Depends(get_
         {"request": request, "tiempos": tiempos, "mensaje": f"Tiempo con ID {tiempo_id} eliminado"}
     )
 
-# -----------------------------
-# READ: Listar tiempos eliminados
-# -----------------------------
+
 @router.get("/eliminados/", response_class=HTMLResponse)
 def get_tiempos_eliminados(request: Request, db: Session = Depends(get_db)):
     tiempos = (

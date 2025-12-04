@@ -10,9 +10,7 @@ from models import Escuderia, Piloto
 router = APIRouter(prefix="/teams", tags=["Teams"])
 templates = Jinja2Templates(directory="templates")
 
-# -----------------------------
-# Dependencia de sesión
-# -----------------------------
+
 def get_db():
     db = SessionLocal()
     try:
@@ -20,15 +18,11 @@ def get_db():
     finally:
         db.close()
 
-# -----------------------------
-# Utilidad: convertir binario a base64
-# -----------------------------
+
 def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
-# -----------------------------
-# HOME: Listar escuderías
-# -----------------------------
+
 @router.get("/", response_class=HTMLResponse)
 def home(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
@@ -41,9 +35,7 @@ def home(request: Request, db: Session = Depends(get_db)):
         {"request": request, "escuderias": escuderias}
     )
 
-# -----------------------------
-# DETALLE: Escudería por nombre
-# -----------------------------
+
 @router.get("/team/{team_name}", response_class=HTMLResponse)
 def team_detail(request: Request, team_name: str, db: Session = Depends(get_db)):
     escuderia = db.query(Escuderia).filter(Escuderia.nombre == team_name).first()
@@ -64,14 +56,12 @@ def team_detail(request: Request, team_name: str, db: Session = Depends(get_db))
         {"request": request, "team": escuderia, "pilotos": pilotos}
     )
 
-# -----------------------------
-# DETALLE: Piloto por ID
-# -----------------------------
+
 @router.get("/pilotos/{piloto_id}", response_class=HTMLResponse)
 def piloto_detail(request: Request, piloto_id: int, db: Session = Depends(get_db)):
     piloto = (
         db.query(Piloto)
-        .options(joinedload(Piloto.escuderia))  # 🔹 fuerza la carga de la relación escudería
+        .options(joinedload(Piloto.escuderia)) 
         .filter(Piloto.id == piloto_id)
         .first()
     )

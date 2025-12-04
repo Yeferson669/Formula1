@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fórmula 1 | Proyecto</title>
 
-    <!-- ✅ Tailwind CSS vía CDN -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Efecto neón suave personalizado -->
+    
     <style>
         .neon-title {
-            color: #1f2937; /* gris oscuro */
+            color: #1f2937; 
             text-shadow:
                 0 0 6px rgba(255, 255, 255, 0.3),
                 0 0 12px rgba(255, 255, 255, 0.2),
@@ -19,12 +19,12 @@
         }
     </style>
 
-    <!-- Opcional: tu CSS personalizado -->
+    
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body class="bg-black text-gray-100 font-sans">
 
-    <!-- Header -->
+    
     <header class="bg-red-600 text-center py-8 shadow-lg">
         <h1 class="text-5xl font-extrabold tracking-widest title-font neon-title animate-pulse">
     Fórmula 1
@@ -32,7 +32,7 @@
         <p class="mt-2 text-gray-200 text-sm italic"></p>
     </header>
 
-    <!-- Navbar -->
+    
     <nav class="bg-gray-900 flex flex-wrap justify-center items-center gap-6 p-4 shadow-md">
         <a href="/" class="text-gray-100 font-bold hover:text-red-400 transition">Inicio</a>
         <a href="/escuderias" class="text-gray-100 font-bold hover:text-red-400 transition">Escuderías</a>
@@ -41,14 +41,14 @@
         <a href="/tiempos" class="text-gray-100 font-bold hover:text-red-400 transition">Tiempos</a>
         <a href="/dashboard" class="text-gray-100 font-bold hover:text-red-400 transition">Dashboard</a>
 
-        <!-- 🔎 Buscador de pilotos -->
+        
         <form action="/pilotos/buscar/" method="get" class="flex gap-2">
             <input type="text" name="nombre" placeholder="Buscar piloto..."
                    class="px-2 py-1 rounded border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-red-500">
             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded transition">🔍</button>
         </form>
 
-        <!-- 🔎 Buscador de escuderías -->
+        
         <form action="/escuderias/buscar/" method="get" class="flex gap-2">
             <input type="text" name="nombre" placeholder="Buscar escudería..."
                    class="px-2 py-1 rounded border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-red-500">
@@ -56,12 +56,12 @@
         </form>
     </nav>
 
-    <!-- Main content -->
+    
     <main class="p-6 max-w-6xl mx-auto">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
+    
     <footer class="bg-gray-800 text-gray-400 text-center py-6 text-sm mt-10 border-t border-gray-700">
         © {{ current_year }} Proyecto FastAPI - Fórmula 1 🏁
     </footer>

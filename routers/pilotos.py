@@ -9,9 +9,7 @@ from models import Piloto, Escuderia
 router = APIRouter(prefix="/pilotos", tags=["Pilotos"])
 templates = Jinja2Templates(directory="templates")
 
-# -----------------------------
-# Dependencia de sesión
-# -----------------------------
+
 def get_db():
     db = SessionLocal()
     try:
@@ -19,15 +17,11 @@ def get_db():
     finally:
         db.close()
 
-# -----------------------------
-# Utilidad: convertir binario a base64
-# -----------------------------
+
 def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
-# -----------------------------
-# READ: Listar todos los pilotos activos
-# -----------------------------
+
 @router.get("/", response_class=HTMLResponse)
 def get_pilotos(request: Request, db: Session = Depends(get_db)):
     pilotos = db.query(Piloto).filter(Piloto.activo == True).all()
@@ -40,9 +34,7 @@ def get_pilotos(request: Request, db: Session = Depends(get_db)):
         {"request": request, "pilotos": pilotos}
     )
 
-# -----------------------------
-# READ: Detalle de piloto por ID
-# -----------------------------
+
 @router.get("/{piloto_id}", response_class=HTMLResponse)
 def get_piloto_by_id(request: Request, piloto_id: int, db: Session = Depends(get_db)):
     piloto = (
@@ -66,9 +58,7 @@ def get_piloto_by_id(request: Request, piloto_id: int, db: Session = Depends(get
         {"request": request, "piloto": piloto}
     )
 
-# -----------------------------
-# READ: Buscar pilotos por nombre
-# -----------------------------
+
 @router.get("/buscar/", response_class=HTMLResponse)
 def buscar_pilotos(request: Request, nombre: str = None, db: Session = Depends(get_db)):
     if not nombre:
@@ -84,9 +74,7 @@ def buscar_pilotos(request: Request, nombre: str = None, db: Session = Depends(g
         {"request": request, "pilotos": resultados, "busqueda": nombre}
     )
 
-# -----------------------------
-# CREATE: Crear piloto (con archivo binario)
-# -----------------------------
+
 @router.post("/", response_class=HTMLResponse)
 async def create_piloto(
     request: Request,
@@ -144,9 +132,7 @@ async def create_piloto(
         {"request": request, "pilotos": pilotos, "mensaje": f"Piloto {db_piloto.nombre} creado exitosamente"}
     )
 
-# -----------------------------
-# UPDATE: Editar piloto (con archivo binario)
-# -----------------------------
+
 @router.post("/editar/{piloto_id}", response_class=HTMLResponse)
 async def update_piloto(
     request: Request,
@@ -173,9 +159,7 @@ async def update_piloto(
 
     return templates.TemplateResponse("piloto_detail.html", {"request": request, "piloto": db_piloto})
 
-# -----------------------------
-# DELETE: Marcar piloto como inactivo
-# -----------------------------
+
 @router.get("/eliminar/{piloto_id}", response_class=HTMLResponse)
 def eliminar_piloto(request: Request, piloto_id: int, db: Session = Depends(get_db)):
     piloto = db.query(Piloto).filter(Piloto.id == piloto_id).first()
@@ -193,9 +177,7 @@ def eliminar_piloto(request: Request, piloto_id: int, db: Session = Depends(get_
         {"request": request, "pilotos": pilotos, "mensaje": f"Piloto {piloto.nombre} fue eliminado"}
     )
 
-# -----------------------------
-# READ: Listar pilotos eliminados
-# -----------------------------
+
 @router.get("/eliminados/", response_class=HTMLResponse)
 def get_pilotos_eliminados(request: Request, db: Session = Depends(get_db)):
     pilotos = db.query(Piloto).filter(Piloto.activo == False).all()

@@ -9,9 +9,7 @@ from models import Escuderia, Piloto
 router = APIRouter(prefix="/escuderias", tags=["Escuderías"])
 templates = Jinja2Templates(directory="templates")
 
-# -----------------------------
-# Dependencia de sesión
-# -----------------------------
+
 def get_db():
     db = SessionLocal()
     try:
@@ -19,15 +17,10 @@ def get_db():
     finally:
         db.close()
 
-# -----------------------------
-# Utilidad: convertir binario a base64
-# -----------------------------
 def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
-# -----------------------------
-# READ: Buscar escuderías por nombre
-# -----------------------------
+
 @router.get("/buscar", response_class=HTMLResponse)
 def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(get_db)):
     if nombre:
@@ -43,9 +36,7 @@ def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(
         {"request": request, "escuderias": escuderias, "busqueda": nombre}
     )
 
-# -----------------------------
-# READ: Listar todas las escuderías activas
-# -----------------------------
+
 @router.get("/", response_class=HTMLResponse)
 def get_escuderias(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
@@ -58,9 +49,7 @@ def get_escuderias(request: Request, db: Session = Depends(get_db)):
         {"request": request, "escuderias": escuderias}
     )
 
-# -----------------------------
-# READ: Detalle de escudería por ID
-# -----------------------------
+
 @router.get("/{escuderia_id}", response_class=HTMLResponse)
 def get_escuderia_by_id(request: Request, escuderia_id: int, db: Session = Depends(get_db)):
     esc = db.query(Escuderia).filter(Escuderia.id == escuderia_id, Escuderia.activo == True).first()
@@ -81,9 +70,7 @@ def get_escuderia_by_id(request: Request, escuderia_id: int, db: Session = Depen
         {"request": request, "team": esc, "pilotos": pilotos}
     )
 
-# -----------------------------
-# CREATE: Crear escudería (con archivo binario)
-# -----------------------------
+
 @router.post("/", response_class=HTMLResponse)
 async def create_escuderia(
     request: Request,
@@ -122,9 +109,7 @@ async def create_escuderia(
         {"request": request, "escuderias": escuderias}
     )
 
-# -----------------------------
-# UPDATE: Editar escudería (con archivo binario)
-# -----------------------------
+
 @router.post("/editar/{escuderia_id}", response_class=HTMLResponse)
 async def update_escuderia(
     request: Request,
@@ -161,9 +146,7 @@ async def update_escuderia(
         {"request": request, "team": db_esc, "pilotos": pilotos}
     )
 
-# -----------------------------
-# DELETE: Marcar escudería como inactiva
-# -----------------------------
+
 @router.get("/eliminar/{escuderia_id}", response_class=HTMLResponse)
 def eliminar_escuderia(request: Request, escuderia_id: int, db: Session = Depends(get_db)):
     esc = db.query(Escuderia).filter(Escuderia.id == escuderia_id).first()
@@ -184,9 +167,7 @@ def eliminar_escuderia(request: Request, escuderia_id: int, db: Session = Depend
         {"request": request, "escuderias": escuderias, "mensaje": f"Escudería {esc.nombre} fue eliminada"}
     )
 
-# -----------------------------
-# READ: Listar escuderías eliminadas
-# -----------------------------
+
 @router.get("/eliminados/", response_class=HTMLResponse)
 def get_eliminadas(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == False).all()

@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Date, Float
 from sqlalchemy.orm import relationship
 from database import Base
 
-# Tabla intermedia para relación muchos a muchos entre pilotos y circuitos
+
 piloto_circuito = Table(
     "piloto_circuito",
     Base.metadata,
@@ -19,9 +19,9 @@ class Escuderia(Base):
     pais = Column(String(50), nullable=False)
     activo = Column(Boolean, default=True)
 
-    # 🔹 Antes: solo URL
+    
     logo_url = Column(String(255), nullable=True)
-    # 🔹 Nuevo: binario
+    
     logo = Column(LargeBinary, nullable=True)
 
     pilotos = relationship("Piloto", back_populates="escuderia")
@@ -37,14 +37,14 @@ class Piloto(Base):
     activo = Column(Boolean, default=True)
     escuderia_id = Column(Integer, ForeignKey("escuderias.id"))
 
-    # 🔹 Campos que antes estaban en PerfilPiloto
+    
     fecha_nacimiento = Column(Date, nullable=True)
     biografia = Column(String(500), nullable=True)
     twitter = Column(String(50), nullable=True)
 
-    # 🔹 Antes: solo URL
+    
     imagen_url = Column(String(255), nullable=True)
-    # 🔹 Nuevo: binario
+    
     imagen = Column(LargeBinary, nullable=True)
 
     escuderia = relationship("Escuderia", back_populates="pilotos")
@@ -58,12 +58,12 @@ class Circuito(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(50), unique=True, index=True, nullable=False)
     pais = Column(String(50), nullable=False)
-    longitud_km = Column(Float, nullable=True)  # mejor Float para km
+    longitud_km = Column(Float, nullable=True)  
     activo = Column(Boolean, default=True)
 
-    # 🔹 Antes: solo URL
+    
     imagen_url = Column(String(255), nullable=True)
-    # 🔹 Nuevo: binario
+    
     imagen = Column(LargeBinary, nullable=True)
 
     descripcion = Column(String, nullable=True)
@@ -83,7 +83,7 @@ class Tiempo(Base):
     fecha = Column(Date, nullable=True)
     activo = Column(Boolean, default=True)
 
-    # Relaciones
+    
     piloto = relationship("Piloto", back_populates="tiempos")
     circuito = relationship("Circuito", back_populates="tiempos")
 
