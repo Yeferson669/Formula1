@@ -14,3 +14,16 @@ classDiagram
     Tiempo --> Circuito : realizado en
     Escuderia --> Piloto : tiene (máx 2)
     Circuito --> Tiempo : acumula
+
+🔄 Diagrama de Actividades
+flowchart TD
+    A[Usuario] --> B[Formulario creación]
+    B --> C[Validación datos]
+    C -->|Correcto| D[Guardar en BD]
+    C -->|Error| E[Mostrar mensaje]
+    D --> F[Listado activo]
+    F --> G[Eliminar registro]
+    G --> H[Marcar activo=False]
+    H --> I[Listado eliminados]
+    I --> J[Restaurar registro]
+    J --> F
