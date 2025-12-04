@@ -18,11 +18,18 @@
 
 <ul class="space-y-2">
     {% for piloto in pilotos %}
-        <li class="bg-gray-800 p-3 rounded-lg shadow-md">
+        <li class="bg-gray-800 p-3 rounded-lg shadow-md text-center">
             <a href="/pilotos/{{ piloto.id }}"
-               class="text-red-400 hover:text-red-600 font-semibold">
+               class="text-red-400 hover:text-red-600 font-semibold block">
                 {{ piloto.nombre }} (N° {{ piloto.numero }}) - {{ piloto.nacionalidad }}
             </a>
+            {% if piloto.imagen %}
+                <img src="data:image/png;base64,{{ piloto.imagen }}" 
+                     alt="Foto de {{ piloto.nombre }}"
+                     class="w-24 h-auto object-contain mt-2 rounded mx-auto">
+            {% else %}
+                <p class="italic text-gray-400 text-sm mt-2">Sin imagen disponible</p>
+            {% endif %}
         </li>
     {% else %}
         <li class="italic text-gray-400">No hay pilotos registrados en esta escudería.</li>

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-3xl font-bold text-red-500 mb-6">Escuderías</h1>
+
+{% if mensaje %}
+<p class="text-green-400 mb-4 text-center">{{ mensaje }}</p>
+{% endif %}
+
+<!-- Listado de escuderías -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    {% for escuderia in escuderias %}
+    <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg text-center">
+        {% if escuderia.logo %}
+            <img src="data:image/png;base64,{{ escuderia.logo }}" 
+                 alt="Logo de {{ escuderia.nombre }}"
+                 class="w-32 h-auto object-contain mx-auto mb-4 rounded">
+        {% else %}
+            <p class="italic text-gray-400 mb-4">Sin logo disponible</p>
+        {% endif %}
+        <h2 class="text-xl font-semibold text-red-400 mb-2">
+            <a href="/escuderias/{{ escuderia.id }}">{{ escuderia.nombre }}</a>
+        </h2>
+        <p class="text-sm"><strong>País:</strong> {{ escuderia.pais }}</p>
+        <div class="mt-3">
+            <a href="/escuderias/eliminar/{{ escuderia.id }}" 
+               class="text-red-500 hover:text-red-700">Eliminar</a>
+        </div>
+    </div>
+    {% else %}
+    <p class="italic text-gray-400">No hay escuderías registradas.</p>
+    {% endfor %}
+</div>
+
+<hr class="my-6 border-gray-700">
+
+<!-- Formulario de creación -->
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Registrar nueva escudería</h2>
+<form method="post" action="/escuderias/crear/" enctype="multipart/form-data" 
+      class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <div>
+        <label class="block text-gray-300">Nombre:</label>
+        <input type="text" name="nombre" required 
+               class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">País:</label>
+        <input type="text" name="pais" required 
+               class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Logo:</label>
+        <input type="file" name="logo" 
+               class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <button type="submit" 
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        Guardar
+    </button>
+</form>
+{% endblock %}

@@ -1,6 +1,6 @@
 import base64
 from fastapi import APIRouter, Request, Depends, Form, UploadFile, File
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from database import SessionLocal
@@ -24,7 +24,9 @@ def convertir_imagen(binario):
 @router.get("/buscar", response_class=HTMLResponse)
 def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(get_db)):
     if nombre:
-        escuderias = db.query(Escuderia).filter(Escuderia.nombre.ilike(f"%{nombre}%"), Escuderia.activo == True).all()
+        escuderias = db.query(Escuderia).filter(
+            Escuderia.nombre.ilike(f"%{nombre}%"), Escuderia.activo == True
+        ).all()
     else:
         escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
 
@@ -32,150 +34,103 @@ def buscar_escuderias(request: Request, nombre: str = "", db: Session = Depends(
         e.logo = convertir_imagen(e.logo)
 
     return templates.TemplateResponse(
-        "index.html",
+        "escuderias.html",
         {"request": request, "escuderias": escuderias, "busqueda": nombre}
     )
 
 
 @router.get("/", response_class=HTMLResponse)
-def get_escuderias(request: Request, db: Session = Depends(get_db)):
+def listar_escuderias(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
-
     for e in escuderias:
         e.logo = convertir_imagen(e.logo)
-
     return templates.TemplateResponse(
-        "index.html",
+        "escuderias.html",
         {"request": request, "escuderias": escuderias}
     )
 
 
 @router.get("/{escuderia_id}", response_class=HTMLResponse)
-def get_escuderia_by_id(request: Request, escuderia_id: int, db: Session = Depends(get_db)):
-    esc = db.query(Escuderia).filter(Escuderia.id == escuderia_id, Escuderia.activo == True).first()
+def detalle_escuderia(request: Request, escuderia_id: int, db: Session = Depends(get_db)):
+    esc = db.query(Escuderia).filter(
+        Escuderia.id == escuderia_id, Escuderia.activo == True
+    ).first()
     if not esc:
         return templates.TemplateResponse(
-            "team.html",
-            {"request": request, "team": None, "pilotos": [], "error": "Escudería no encontrada"}
+            "escuderia.html",
+            {"request": request, "escuderia": None, "pilotos": [], "error": "Escudería no encontrada"}
         )
 
     esc.logo = convertir_imagen(esc.logo)
-
     pilotos = db.query(Piloto).filter(Piloto.escuderia_id == esc.id).all()
     for p in pilotos:
         p.imagen = convertir_imagen(p.imagen)
 
     return templates.TemplateResponse(
-        "team.html",
-        {"request": request, "team": esc, "pilotos": pilotos}
+        "escuderia.html",
+        {"request": request, "escuderia": esc, "pilotos": pilotos}
     )
 
 
-@router.post("/", response_class=HTMLResponse)
-async def create_escuderia(
-    request: Request,
+@router.post("/crear/", response_class=HTMLResponse)
+async def crear_escuderia(
     nombre: str = Form(...),
     pais: str = Form(...),
     logo: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
-    existente = db.query(Escuderia).filter(Escuderia.nombre == nombre, Escuderia.activo == True).first()
+    existente = db.query(Escuderia).filter(
+        Escuderia.nombre == nombre, Escuderia.activo == True
+    ).first()
     if existente:
-        return templates.TemplateResponse(
-            "error.html",
-            {"request": request, "error": "Ya existe una escudería con ese nombre"}
-        )
+        return RedirectResponse(url="/escuderias/", status_code=303)
 
-    logo_binario = None
-    if logo:
-        logo_binario = await logo.read()
+    logo_binario = await logo.read() if logo else None
 
-    db_esc = Escuderia(
-        nombre=nombre,
-        pais=pais,
-        logo=logo_binario,
-        activo=True
-    )
-    db.add(db_esc)
+    nueva = Escuderia(nombre=nombre, pais=pais, logo=logo_binario, activo=True)
+    db.add(nueva)
     db.commit()
-    db.refresh(db_esc)
-
-    escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
-    for e in escuderias:
-        e.logo = convertir_imagen(e.logo)
-
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "escuderias": escuderias}
-    )
+    return RedirectResponse(url="/escuderias/", status_code=303)
 
 
 @router.post("/editar/{escuderia_id}", response_class=HTMLResponse)
-async def update_escuderia(
-    request: Request,
+async def editar_escuderia(
     escuderia_id: int,
     nombre: str = Form(...),
     pais: str = Form(...),
     logo: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
-    db_esc = db.query(Escuderia).filter(Escuderia.id == escuderia_id, Escuderia.activo == True).first()
-    if not db_esc:
-        return templates.TemplateResponse(
-            "error.html",
-            {"request": request, "error": "Escudería no encontrada"}
-        )
+    esc = db.query(Escuderia).filter(
+        Escuderia.id == escuderia_id, Escuderia.activo == True
+    ).first()
+    if not esc:
+        return RedirectResponse(url="/escuderias/", status_code=303)
 
-    db_esc.nombre = nombre
-    db_esc.pais = pais
-
+    esc.nombre = nombre
+    esc.pais = pais
     if logo:
-        db_esc.logo = await logo.read()
+        esc.logo = await logo.read()
 
     db.commit()
-    db.refresh(db_esc)
-
-    db_esc.logo = convertir_imagen(db_esc.logo)
-
-    pilotos = db.query(Piloto).filter(Piloto.escuderia_id == db_esc.id).all()
-    for p in pilotos:
-        p.imagen = convertir_imagen(p.imagen)
-
-    return templates.TemplateResponse(
-        "team.html",
-        {"request": request, "team": db_esc, "pilotos": pilotos}
-    )
+    return RedirectResponse(url=f"/escuderias/{escuderia_id}", status_code=303)
 
 
 @router.get("/eliminar/{escuderia_id}", response_class=HTMLResponse)
-def eliminar_escuderia(request: Request, escuderia_id: int, db: Session = Depends(get_db)):
+def eliminar_escuderia(escuderia_id: int, db: Session = Depends(get_db)):
     esc = db.query(Escuderia).filter(Escuderia.id == escuderia_id).first()
-    if not esc:
-        return templates.TemplateResponse(
-            "error.html",
-            {"request": request, "error": "Escudería no encontrada"}
-        )
-    esc.activo = False
-    db.commit()
-
-    escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
-    for e in escuderias:
-        e.logo = convertir_imagen(e.logo)
-
-    return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "escuderias": escuderias, "mensaje": f"Escudería {esc.nombre} fue eliminada"}
-    )
+    if esc:
+        esc.activo = False
+        db.commit()
+    return RedirectResponse(url="/escuderias/", status_code=303)
 
 
 @router.get("/eliminados/", response_class=HTMLResponse)
-def get_eliminadas(request: Request, db: Session = Depends(get_db)):
+def listar_eliminadas(request: Request, db: Session = Depends(get_db)):
     escuderias = db.query(Escuderia).filter(Escuderia.activo == False).all()
-
     for e in escuderias:
         e.logo = convertir_imagen(e.logo)
-
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "escuderias": escuderias}
+        "escuderias.html",
+        {"request": request, "escuderias": escuderias, "mensaje": "Listado de escuderías eliminadas"}
     )

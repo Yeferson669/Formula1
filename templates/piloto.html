@@ -20,6 +20,12 @@
 
             <p class="mb-4"><strong>Nacionalidad:</strong> {{ piloto.nacionalidad }}</p>
 
+            {% if piloto.escuderia %}
+                <p class="mb-4"><strong>Escudería:</strong> {{ piloto.escuderia.nombre }}</p>
+            {% else %}
+                <p class="italic text-gray-400 mb-4"><strong>Escudería:</strong> No asignada</p>
+            {% endif %}
+
             <a href="/pilotos/{{ piloto.id }}"
                class="mt-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded text-center">
                 Ver detalles
@@ -29,6 +35,53 @@
         <p class="text-center text-gray-300">No hay pilotos registrados.</p>
     {% endfor %}
 </div>
+
+<hr class="my-6 border-gray-700">
+
+<!-- Formulario de creación -->
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Registrar nuevo piloto</h2>
+<form method="post" action="/pilotos/crear/" enctype="multipart/form-data" 
+      class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <div>
+        <label class="block text-gray-300">Nombre:</label>
+        <input type="text" name="nombre" required class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Número:</label>
+        <input type="number" name="numero" required class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Nacionalidad:</label>
+        <input type="text" name="nacionalidad" required class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Escudería:</label>
+        <select name="escuderia_id" required class="w-full p-2 rounded bg-gray-700 text-white">
+            {% for escuderia in escuderias %}
+                <option value="{{ escuderia.id }}">{{ escuderia.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-gray-300">Fecha de nacimiento:</label>
+        <input type="date" name="fecha_nacimiento" class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Biografía:</label>
+        <textarea name="biografia" rows="3" class="w-full p-2 rounded bg-gray-700 text-white"></textarea>
+    </div>
+    <div>
+        <label class="block text-gray-300">Twitter:</label>
+        <input type="text" name="twitter" class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Imagen:</label>
+        <input type="file" name="imagen" class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+        Guardar
+    </button>
+</form>
 
 <div class="text-center mt-6">
     <a href="/" class="text-red-400 hover:text-red-600 font-semibold">⬅ Volver al inicio</a>

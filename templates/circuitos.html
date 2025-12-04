@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold text-blue-400 mb-6">Circuitos de Fórmula</h1>
+
+<!-- Listado de circuitos -->
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {% for c in circuitos %}
+        <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
+            <h2 class="text-xl font-semibold text-blue-300 mb-2">{{ c.nombre }}</h2>
+
+            {% if c.imagen %}
+                <img src="data:image/png;base64,{{ c.imagen }}" 
+                     alt="Imagen de {{ c.nombre }}"
+                     class="w-full h-40 object-cover rounded mb-4">
+            {% else %}
+                <p class="italic text-gray-400 mb-4">Sin imagen disponible</p>
+            {% endif %}
+
+            <p class="mb-2"><strong>País:</strong> {{ c.pais }}</p>
+
+            {% if c.longitud_km %}
+                <p class="mb-2"><strong>Longitud:</strong> {{ c.longitud_km }} km</p>
+            {% endif %}
+
+            {% if c.descripcion %}
+                <p class="mb-4 text-sm"><strong>Descripción:</strong> {{ c.descripcion }}</p>
+            {% else %}
+                <p class="italic text-gray-400 mb-4">No hay información disponible</p>
+            {% endif %}
+
+            <a href="/circuitos/{{ c.id }}"
+               class="mt-auto bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded text-center">
+                Ver detalles
+            </a>
+        </div>
+    {% else %}
+        <p class="text-center text-gray-300">No hay circuitos registrados.</p>
+    {% endfor %}
+</div>
+
+<hr class="my-6 border-gray-700">
+
+<!-- Formulario de creación -->
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Registrar nuevo circuito</h2>
+<form method="post" action="/circuitos/crear/" enctype="multipart/form-data" 
+      class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <div>
+        <label class="block text-gray-300">Nombre:</label>
+        <input type="text" name="nombre" required class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">País:</label>
+        <input type="text" name="pais" required class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Longitud (km):</label>
+        <input type="number" step="0.01" name="longitud_km" class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Descripción:</label>
+        <textarea name="descripcion" rows="3" class="w-full p-2 rounded bg-gray-700 text-white"></textarea>
+    </div>
+    <div>
+        <label class="block text-gray-300">Imagen:</label>
+        <input type="file" name="imagen" class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Guardar
+    </button>
+</form>
+
+<div class="text-center mt-6">
+    <a href="/" class="text-blue-400 hover:text-blue-600 font-semibold">⬅ Volver al inicio</a>
+</div>
+{% endblock %}

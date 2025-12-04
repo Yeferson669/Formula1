@@ -1,6 +1,6 @@
 import base64
 from fastapi import APIRouter, Request, Depends, Form, UploadFile, File
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from database import SessionLocal
@@ -22,39 +22,37 @@ def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
 
+# Listado de circuitos + formulario
 @router.get("/", response_class=HTMLResponse)
-def get_circuitos(request: Request, db: Session = Depends(get_db)):
+def listar_circuitos(request: Request, db: Session = Depends(get_db)):
     circuitos = db.query(Circuito).filter(Circuito.activo == True).all()
-
     for c in circuitos:
         c.imagen = convertir_imagen(c.imagen)
-
     return templates.TemplateResponse(
-        "circuitos_list.html",
+        "circuitos.html",   # 👈 listado + formulario
         {"request": request, "circuitos": circuitos}
     )
 
 
+# Detalle de circuito
 @router.get("/{circuito_id}", response_class=HTMLResponse)
-def get_circuito_by_id(request: Request, circuito_id: int, db: Session = Depends(get_db)):
+def detalle_circuito(request: Request, circuito_id: int, db: Session = Depends(get_db)):
     circuito = db.query(Circuito).filter(Circuito.id == circuito_id, Circuito.activo == True).first()
     if not circuito:
         return templates.TemplateResponse(
             "circuito_detail.html",
-            {"request": request, "error": "Circuito no encontrado"}
+            {"request": request, "circuito": None, "error": "Circuito no encontrado"}
         )
-
     circuito.imagen = convertir_imagen(circuito.imagen)
-
     return templates.TemplateResponse(
         "circuito_detail.html",
         {"request": request, "circuito": circuito}
     )
 
 
-@router.post("/", response_class=HTMLResponse)
-async def create_circuito(
-    request: Request,
+# Crear circuito
+@router.post("/crear/", response_class=HTMLResponse)
+async def crear_circuito(
     nombre: str = Form(...),
     pais: str = Form(...),
     longitud_km: float = Form(None),
@@ -64,13 +62,11 @@ async def create_circuito(
 ):
     existente = db.query(Circuito).filter(Circuito.nombre == nombre, Circuito.activo == True).first()
     if existente:
-        return templates.TemplateResponse("error.html", {"request": request, "error": "Ya existe un circuito con ese nombre"})
+        return templates.TemplateResponse("error.html", {"request": {}, "error": "Ya existe un circuito con ese nombre"})
 
-    imagen_binaria = None
-    if imagen:
-        imagen_binaria = await imagen.read()
+    imagen_binaria = await imagen.read() if imagen else None
 
-    db_circuito = Circuito(
+    nuevo = Circuito(
         nombre=nombre,
         pais=pais,
         longitud_km=longitud_km,
@@ -78,23 +74,14 @@ async def create_circuito(
         imagen=imagen_binaria,
         activo=True
     )
-    db.add(db_circuito)
+    db.add(nuevo)
     db.commit()
-    db.refresh(db_circuito)
-
-    circuitos = db.query(Circuito).filter(Circuito.activo == True).all()
-    for c in circuitos:
-        c.imagen = convertir_imagen(c.imagen)
-
-    return templates.TemplateResponse(
-        "circuitos_list.html",
-        {"request": request, "circuitos": circuitos, "mensaje": f"Circuito {db_circuito.nombre} creado exitosamente"}
-    )
+    return RedirectResponse(url="/circuitos/", status_code=303)
 
 
+# Editar circuito
 @router.post("/editar/{circuito_id}", response_class=HTMLResponse)
-async def update_circuito(
-    request: Request,
+async def editar_circuito(
     circuito_id: int,
     nombre: str = Form(...),
     pais: str = Form(...),
@@ -103,21 +90,38 @@ async def update_circuito(
     imagen: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
-    db_circuito = db.query(Circuito).filter(Circuito.id == circuito_id, Circuito.activo == True).first()
-    if not db_circuito:
-        return templates.TemplateResponse("error.html", {"request": request, "error": "Circuito no encontrado"})
+    circuito = db.query(Circuito).filter(Circuito.id == circuito_id, Circuito.activo == True).first()
+    if not circuito:
+        return templates.TemplateResponse("error.html", {"request": {}, "error": "Circuito no encontrado"})
 
-    db_circuito.nombre = nombre
-    db_circuito.pais = pais
-    db_circuito.longitud_km = longitud_km
-    db_circuito.descripcion = descripcion
-
+    circuito.nombre = nombre
+    circuito.pais = pais
+    circuito.longitud_km = longitud_km
+    circuito.descripcion = descripcion
     if imagen:
-        db_circuito.imagen = await imagen.read()
+        circuito.imagen = await imagen.read()
 
     db.commit()
-    db.refresh(db_circuito)
+    return RedirectResponse(url=f"/circuitos/{circuito_id}", status_code=303)
 
-    db_circuito.imagen = convertir_imagen(db_circuito.imagen)
 
-    return templates.TemplateResponse("circuito_detail.html", {"request": request, "circuito": db_circuito})
+# Eliminar circuito
+@router.get("/eliminar/{circuito_id}", response_class=HTMLResponse)
+def eliminar_circuito(circuito_id: int, db: Session = Depends(get_db)):
+    circuito = db.query(Circuito).filter(Circuito.id == circuito_id).first()
+    if circuito:
+        circuito.activo = False
+        db.commit()
+    return RedirectResponse(url="/circuitos/", status_code=303)
+
+
+# Listar circuitos eliminados
+@router.get("/eliminados/", response_class=HTMLResponse)
+def listar_eliminados(request: Request, db: Session = Depends(get_db)):
+    circuitos = db.query(Circuito).filter(Circuito.activo == False).all()
+    for c in circuitos:
+        c.imagen = convertir_imagen(c.imagen)
+    return templates.TemplateResponse(
+        "circuitos.html",   # 👈 listado + formulario
+        {"request": request, "circuitos": circuitos, "mensaje": "Listado de circuitos eliminados"}
+    )

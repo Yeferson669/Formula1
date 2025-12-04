@@ -1,6 +1,6 @@
 import base64
 from fastapi import APIRouter, Request, Depends, Form, UploadFile, File
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session, joinedload
 from database import SessionLocal
@@ -22,21 +22,22 @@ def convertir_imagen(binario):
     return base64.b64encode(binario).decode("utf-8") if binario else None
 
 
+# Listado de pilotos + formulario
 @router.get("/", response_class=HTMLResponse)
-def get_pilotos(request: Request, db: Session = Depends(get_db)):
+def listar_pilotos(request: Request, db: Session = Depends(get_db)):
     pilotos = db.query(Piloto).filter(Piloto.activo == True).all()
-
     for p in pilotos:
         p.imagen = convertir_imagen(p.imagen)
-
+    escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
     return templates.TemplateResponse(
-        "pilotos_list.html",
-        {"request": request, "pilotos": pilotos}
+        "piloto.html",   # 👈 listado + formulario
+        {"request": request, "pilotos": pilotos, "escuderias": escuderias}
     )
 
 
+# Detalle de piloto
 @router.get("/{piloto_id}", response_class=HTMLResponse)
-def get_piloto_by_id(request: Request, piloto_id: int, db: Session = Depends(get_db)):
+def detalle_piloto(request: Request, piloto_id: int, db: Session = Depends(get_db)):
     piloto = (
         db.query(Piloto)
         .options(joinedload(Piloto.escuderia))
@@ -45,8 +46,8 @@ def get_piloto_by_id(request: Request, piloto_id: int, db: Session = Depends(get
     )
     if not piloto:
         return templates.TemplateResponse(
-            "piloto_detail.html",
-            {"request": request, "error": "Piloto no encontrado"}
+            "piloto_detail.html",   # 👈 detalle
+            {"request": request, "piloto": None, "error": "Piloto no encontrado"}
         )
 
     piloto.imagen = convertir_imagen(piloto.imagen)
@@ -54,11 +55,12 @@ def get_piloto_by_id(request: Request, piloto_id: int, db: Session = Depends(get
         piloto.escuderia.logo = convertir_imagen(piloto.escuderia.logo)
 
     return templates.TemplateResponse(
-        "piloto_detail.html",
+        "piloto_detail.html",   # 👈 detalle
         {"request": request, "piloto": piloto}
     )
 
 
+# Buscar pilotos
 @router.get("/buscar/", response_class=HTMLResponse)
 def buscar_pilotos(request: Request, nombre: str = None, db: Session = Depends(get_db)):
     if not nombre:
@@ -69,15 +71,16 @@ def buscar_pilotos(request: Request, nombre: str = None, db: Session = Depends(g
     for p in resultados:
         p.imagen = convertir_imagen(p.imagen)
 
+    escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
     return templates.TemplateResponse(
-        "pilotos_list.html",
-        {"request": request, "pilotos": resultados, "busqueda": nombre}
+        "piloto.html",   # 👈 listado + formulario
+        {"request": request, "pilotos": resultados, "escuderias": escuderias, "busqueda": nombre}
     )
 
 
-@router.post("/", response_class=HTMLResponse)
-async def create_piloto(
-    request: Request,
+# Crear piloto
+@router.post("/crear/", response_class=HTMLResponse)
+async def crear_piloto(
     nombre: str = Form(...),
     numero: int = Form(...),
     nacionalidad: str = Form(...),
@@ -96,19 +99,13 @@ async def create_piloto(
     if count_pilotos >= 2:
         return templates.TemplateResponse("error.html", {"request": request, "error": "La escudería ya tiene el máximo de 2 pilotos activos"})
 
-    piloto_existente = db.query(Piloto).filter(Piloto.nombre == nombre, Piloto.activo == True).first()
-    if piloto_existente and piloto_existente.escuderia_id != escuderia_id:
-        return templates.TemplateResponse("error.html", {"request": request, "error": "Este piloto ya pertenece a otra escudería activa"})
-
     existente = db.query(Piloto).filter(Piloto.numero == numero, Piloto.activo == True).first()
     if existente:
         return templates.TemplateResponse("error.html", {"request": request, "error": "El número de piloto ya está en uso"})
 
-    imagen_binaria = None
-    if imagen:
-        imagen_binaria = await imagen.read()
+    imagen_binaria = await imagen.read() if imagen else None
 
-    db_piloto = Piloto(
+    nuevo = Piloto(
         nombre=nombre,
         numero=numero,
         nacionalidad=nacionalidad,
@@ -119,73 +116,51 @@ async def create_piloto(
         imagen=imagen_binaria,
         activo=True
     )
-    db.add(db_piloto)
+    db.add(nuevo)
     db.commit()
-    db.refresh(db_piloto)
-
-    pilotos = db.query(Piloto).filter(Piloto.activo == True).all()
-    for p in pilotos:
-        p.imagen = convertir_imagen(p.imagen)
-
-    return templates.TemplateResponse(
-        "pilotos_list.html",
-        {"request": request, "pilotos": pilotos, "mensaje": f"Piloto {db_piloto.nombre} creado exitosamente"}
-    )
+    return RedirectResponse(url="/pilotos/", status_code=303)
 
 
+# Editar piloto
 @router.post("/editar/{piloto_id}", response_class=HTMLResponse)
-async def update_piloto(
-    request: Request,
+async def editar_piloto(
     piloto_id: int,
     nombre: str = Form(...),
     nacionalidad: str = Form(...),
     imagen: UploadFile = File(None),
     db: Session = Depends(get_db)
 ):
-    db_piloto = db.query(Piloto).filter(Piloto.id == piloto_id, Piloto.activo == True).first()
-    if not db_piloto:
-        return templates.TemplateResponse("error.html", {"request": request, "error": "Piloto no encontrado"})
-
-    db_piloto.nombre = nombre
-    db_piloto.nacionalidad = nacionalidad
-
-    if imagen:
-        db_piloto.imagen = await imagen.read()
-
-    db.commit()
-    db.refresh(db_piloto)
-
-    db_piloto.imagen = convertir_imagen(db_piloto.imagen)
-
-    return templates.TemplateResponse("piloto_detail.html", {"request": request, "piloto": db_piloto})
-
-
-@router.get("/eliminar/{piloto_id}", response_class=HTMLResponse)
-def eliminar_piloto(request: Request, piloto_id: int, db: Session = Depends(get_db)):
-    piloto = db.query(Piloto).filter(Piloto.id == piloto_id).first()
+    piloto = db.query(Piloto).filter(Piloto.id == piloto_id, Piloto.activo == True).first()
     if not piloto:
         return templates.TemplateResponse("error.html", {"request": request, "error": "Piloto no encontrado"})
-    piloto.activo = False
+
+    piloto.nombre = nombre
+    piloto.nacionalidad = nacionalidad
+    if imagen:
+        piloto.imagen = await imagen.read()
+
     db.commit()
-
-    pilotos = db.query(Piloto).filter(Piloto.activo == True).all()
-    for p in pilotos:
-        p.imagen = convertir_imagen(p.imagen)
-
-    return templates.TemplateResponse(
-        "pilotos_list.html",
-        {"request": request, "pilotos": pilotos, "mensaje": f"Piloto {piloto.nombre} fue eliminado"}
-    )
+    return RedirectResponse(url=f"/pilotos/{piloto_id}", status_code=303)
 
 
+# Eliminar piloto
+@router.get("/eliminar/{piloto_id}", response_class=HTMLResponse)
+def eliminar_piloto(piloto_id: int, db: Session = Depends(get_db)):
+    piloto = db.query(Piloto).filter(Piloto.id == piloto_id).first()
+    if piloto:
+        piloto.activo = False
+        db.commit()
+    return RedirectResponse(url="/pilotos/", status_code=303)
+
+
+# Listar pilotos eliminados
 @router.get("/eliminados/", response_class=HTMLResponse)
-def get_pilotos_eliminados(request: Request, db: Session = Depends(get_db)):
+def listar_eliminados(request: Request, db: Session = Depends(get_db)):
     pilotos = db.query(Piloto).filter(Piloto.activo == False).all()
-
     for p in pilotos:
         p.imagen = convertir_imagen(p.imagen)
-
+    escuderias = db.query(Escuderia).filter(Escuderia.activo == True).all()
     return templates.TemplateResponse(
-        "pilotos_list.html",
-        {"request": request, "pilotos": pilotos, "mensaje": "Listado de pilotos eliminados"}
+        "piloto.html",   # 👈 listado + formulario
+        {"request": request, "pilotos": pilotos, "escuderias": escuderias, "mensaje": "Listado de pilotos eliminados"}
     )

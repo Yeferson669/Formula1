@@ -3,6 +3,7 @@
 {% block content %}
 <h1 class="text-3xl font-bold text-blue-400 mb-6">⏱️ Tiempos registrados</h1>
 
+<!-- Listado de tiempos -->
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     {% for t in tiempos %}
         <div class="bg-gray-900 text-white p-6 rounded-lg shadow-lg flex flex-col">
@@ -34,5 +35,48 @@
     {% else %}
         <p class="text-center text-gray-300">No hay tiempos registrados.</p>
     {% endfor %}
+</div>
+
+<hr class="my-6 border-gray-700">
+
+<!-- Formulario de creación -->
+<h2 class="text-2xl font-semibold text-gray-200 mb-4">Registrar nuevo tiempo</h2>
+<form method="post" action="/tiempos/crear/" enctype="multipart/form-data" 
+      class="space-y-4 bg-gray-800 p-6 rounded-lg shadow-md max-w-md mx-auto">
+    <div>
+        <label class="block text-gray-300">Piloto:</label>
+        <select name="piloto_id" required class="w-full p-2 rounded bg-gray-700 text-white">
+            {% for piloto in pilotos %}
+                <option value="{{ piloto.id }}">{{ piloto.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-gray-300">Circuito:</label>
+        <select name="circuito_id" required class="w-full p-2 rounded bg-gray-700 text-white">
+            {% for circuito in circuitos %}
+                <option value="{{ circuito.id }}">{{ circuito.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label class="block text-gray-300">Tiempo de vuelta (segundos):</label>
+        <input type="number" step="0.001" name="tiempo_vuelta" required class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Posición:</label>
+        <input type="number" name="posicion" class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <div>
+        <label class="block text-gray-300">Fecha:</label>
+        <input type="date" name="fecha" class="w-full p-2 rounded bg-gray-700 text-white">
+    </div>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Guardar
+    </button>
+</form>
+
+<div class="text-center mt-6">
+    <a href="/" class="text-blue-400 hover:text-blue-600 font-semibold">⬅ Volver al inicio</a>
 </div>
 {% endblock %}
