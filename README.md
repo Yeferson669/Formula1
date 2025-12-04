@@ -14,9 +14,8 @@ classDiagram
     Tiempo --> Circuito : realizado en
     Escuderia --> Piloto : tiene (máx 2)
     Circuito --> Tiempo : acumula
-
-
-## 🔄 Diagrama de Actividades
+🔄 Diagrama de Actividades
+mermaid
 flowchart TD
     A[Usuario] --> B[Formulario creación]
     B --> C[Validación datos]
@@ -28,109 +27,65 @@ flowchart TD
     H --> I[Listado eliminados]
     I --> J[Restaurar registro]
     J --> F
-
-
-## 🗂️ Modelos
-Piloto: relación con Escudería (máx 2 pilotos activos por escudería).
-
-Escudería: relación con Pilotos.
-
-Circuito: relación con Tiempos.
-
-Tiempo: relación con Piloto y Circuito, guarda tiempo en segundos pero se muestra en formato MM:SS.mmm.
-
-
-## 🚀 Despliegue
-
-Clonar repositorio: git clone https://github.com/usuario/proyecto-f1.git
+🗂️ Modelos
+Modelo	Relación / Descripción
+Piloto	Relación con Escudería (máx 2 pilotos activos por escudería). Incluye imagen y datos.
+Escudería	Relación con Pilotos. Tiene nombre, país y logo.
+Circuito	Relación con Tiempos. Incluye longitud, país, descripción e imagen.
+Tiempo	Relación con Piloto y Circuito. Guarda tiempo en segundos pero se muestra como MM:SS.mmm.
+🚀 Despliegue
+bash
+# Clonar repositorio
+git clone https://github.com/usuario/proyecto-f1.git
 cd proyecto-f1
 
-Crear entorno virtual e instalar dependencias:python -m venv venv
+# Crear entorno virtual e instalar dependencias
+python -m venv venv
 source venv/bin/activate   # Linux/Mac
 venv\Scripts\activate      # Windows
 pip install -r requirements.txt
 
-Ejecutar servidor:uvicorn main:app --reload
+# Ejecutar servidor
+uvicorn main:app --reload
+Acceder en navegador: 👉 http://127.0.0.1:8000
 
-##  🌐 Endpoints principales
-    ##Pilotos
-GET /pilotos/ → Listado + formulario + eliminados
-
-POST /pilotos/crear/ → Crear piloto
-
-POST /pilotos/editar/{id} → Editar piloto
-
-GET /pilotos/eliminar/{id} → Eliminar (soft delete)
-
-GET /pilotos/restaurar/{id} → Restaurar
-
+🌐 Endpoints principales
+Pilotos
+Método	Endpoint	Descripción
+GET	/pilotos/	Listado + formulario + eliminados
+POST	/pilotos/crear/	Crear piloto
+POST	/pilotos/editar/{id}	Editar piloto
+GET	/pilotos/eliminar/{id}	Eliminar (soft delete)
+GET	/pilotos/restaurar/{id}	Restaurar
 Escuderías
-GET /escuderias/ → Listado + formulario + eliminadas
-
-POST /escuderias/crear/ → Crear escudería
-
-POST /escuderias/editar/{id} → Editar escudería
-
-GET /escuderias/eliminar/{id} → Eliminar
-
-GET /escuderias/restaurar/{id} → Restaurar
-
+Método	Endpoint	Descripción
+GET	/escuderias/	Listado + formulario + eliminadas
+POST	/escuderias/crear/	Crear escudería
+POST	/escuderias/editar/{id}	Editar escudería
+GET	/escuderias/eliminar/{id}	Eliminar
+GET	/escuderias/restaurar/{id}	Restaurar
 Circuitos
-GET /circuitos/ → Listado + formulario + eliminados
-
-POST /circuitos/crear/ → Crear circuito
-
-POST /circuitos/editar/{id} → Editar circuito
-
-GET /circuitos/eliminar/{id} → Eliminar
-
-GET /circuitos/restaurar/{id} → Restaurar
-
+Método	Endpoint	Descripción
+GET	/circuitos/	Listado + formulario + eliminados
+POST	/circuitos/crear/	Crear circuito
+POST	/circuitos/editar/{id}	Editar circuito
+GET	/circuitos/eliminar/{id}	Eliminar
+GET	/circuitos/restaurar/{id}	Restaurar
 Tiempos
-GET /tiempos/ → Listado + formulario + eliminados
-
-POST /tiempos/crear/ → Crear tiempo
-
-POST /tiempos/editar/{id} → Editar tiempo
-
-GET /tiempos/eliminar/{id} → Eliminar
-
-GET /tiempos/restaurar/{id} → Restaurar
-
-Formato de tiempo: se guarda en segundos pero se muestra como MM:SS.mmm.
-
+Método	Endpoint	Descripción
+GET	/tiempos/	Listado + formulario + eliminados
+POST	/tiempos/crear/	Crear tiempo
+POST	/tiempos/editar/{id}	Editar tiempo
+GET	/tiempos/eliminar/{id}	Eliminar
+GET	/tiempos/restaurar/{id}	Restaurar
+Nota	-	El tiempo se guarda en segundos pero se muestra como MM:SS.mmm.
 🛠️ Tecnologías usadas
-Backend
-
-FastAPI → Framework principal para construir la API y manejar rutas.
-
-SQLAlchemy → ORM para manejar modelos y consultas a la base de datos.
-
-PostgreSQL → Base de datos relacional usada para almacenar pilotos, escuderías, circuitos y tiempos.
-
-Frontend
-
-Jinja2 → Motor de plantillas para renderizar HTML dinámico.
-
-TailwindCSS → Framework CSS para estilos modernos y responsivos.
-
-Infraestructura
-
-Uvicorn → Servidor ASGI para correr la aplicación FastAPI.
-
-Python 3.10+ → Lenguaje de programación base del proyecto.
-
-Extras
-
-Soft delete + restauración → Implementado en todos los modelos para trazabilidad.
-
-Conversión de imágenes a Base64 → Para mostrar logos y fotos en las vistas.
-
-Formato de tiempos → Conversión de segundos a MM:SS.mmm para mostrar tiempos de vuelta.
-
-
-
-#🎯 Conclusión#
+Categoría	Tecnologías
+Backend	FastAPI, SQLAlchemy, PostgreSQL
+Frontend	Jinja2, TailwindCSS
+Infraestructura	Uvicorn, Python 3.10+
+Extras	Soft delete + restauración, Conversión de imágenes a Base64, Formato de tiempos MM:SS.mmm
+🎯 Conclusión
 Este proyecto demuestra cómo construir una aplicación web robusta, escalable y clara con FastAPI, aplicando buenas prácticas de:
 
 Soft delete + restauración
@@ -142,3 +97,5 @@ Conversión de datos (tiempos formateados)
 Frontend limpio con TailwindCSS
 
 👨‍💻 Autor: Yeferson David Guaca Buitron
+👨‍💻 Autor: Yeferson David Guaca Buitron
+
