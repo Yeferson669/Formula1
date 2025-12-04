@@ -1,6 +1,8 @@
-📘 Proyecto FórmulaZ – Aplicación Web con FastAPI
-🚀 Descripción General
-FórmulaZ es una aplicación web desarrollada con FastAPI y SQLAlchemy, diseñada para gestionar información relacionada con escuderías, circuitos y tiempos de carrera de Fórmula 1. El proyecto combina un backend robusto con un frontend moderno y visualmente atractivo, desplegado en Render y conectado a una base de datos PostgreSQL alojada en Clever Cloud.
+🏁 Fórmula! – Aplicación Web con FastAPI
+
+Descripción General
+
+Fórmula1 es una aplicación web desarrollada con FastAPI, diseñada para gestionar información sobre escuderías, circuitos y tiempos de carrera de Fórmula 1. El proyecto combina un backend robusto con un frontend moderno y visualmente atractivo, desplegado en Render y conectado a una base de datos PostgreSQL alojada en Clever Cloud.
 
 El objetivo principal es ofrecer una plataforma portable, escalable y segura, con un diseño visual impactante y una infraestructura backend confiable.
 
@@ -21,61 +23,60 @@ Despliegue: Render
 
 Control de Versiones: Git + GitHub
 
-📂 Estructura del Proyecto
-Código
-Formulaz/
-│── main.py              # Punto de entrada FastAPI
-│── models.py            # Definición de modelos SQLAlchemy
-│── routers/             # Endpoints organizados por módulo
-│   ├── escuderias.py
-│   ├── circuitos.py
-│   └── tiempos.py
-│── templates/           # Vistas HTML con Jinja2
-│   ├── base.html
-│   ├── index.html
-│   ├── circuito_detail.html
-│   ├── tiempo_detail.html
-│   └── error.html
-│── static/              # Archivos CSS, JS, imágenes
-│── requirements.txt     # Dependencias del proyecto
-│── .gitignore           # Exclusiones para Git
-│── README.md            # Documentación
+📁 Estructura del Proyecto
+Archivos principales:
+
+main.py: Punto de entrada de la aplicación FastAPI.
+
+models.py: Definición de modelos SQLAlchemy.
+
+requirements.txt: Lista de dependencias del proyecto.
+
+.gitignore: Exclusiones para Git (venv, pycache, etc.).
+
+README.md: Documentación del proyecto.
+
+Carpetas clave:
+
+routers/: Contiene los endpoints organizados por módulo.
+
+escuderias.py: CRUD para escuderías.
+
+circuitos.py: CRUD para circuitos.
+
+tiempos.py: CRUD para tiempos de carrera.
+
+templates/: Vistas HTML renderizadas con Jinja2.
+
+base.html: Template base con navbar y estilos globales.
+
+index.html: Página principal.
+
+circuito_detail.html: Detalle de circuito.
+
+tiempo_detail.html: Detalle de tiempo.
+
+error.html: Página de error personalizada.
+
+static/: Archivos estáticos como CSS, JS e imágenes.
+
 ⚙️ Instalación Local
-Clonar el repositorio
+Clonar el repositorio desde GitHub.
 
-bash
-git clone https://github.com/Yeferson669/Formulaz.git
-cd Formulaz
-Crear entorno virtual
+Crear y activar un entorno virtual.
 
-bash
-python -m venv venv
-source venv/bin/activate   # Linux/Mac
-venv\Scripts\activate      # Windows
-Instalar dependencias
+Instalar las dependencias listadas en requirements.txt..
 
-bash
-pip install -r requirements.txt
-Configurar variables de entorno Crear un archivo .env en la raíz del proyecto:
+Configurar las variables de entorno en un archivo .env con la cadena de conexión a PostgreSQL, clave secreta y modo debug.
 
-env
-DATABASE_URL=postgresql://usuario:contraseña@host:puerto/nombre_db
-SECRET_KEY=tu_clave_secreta
-DEBUG=True
-Ejecutar la aplicación
+Ejecutar la aplicación con Uvicorn en modo desarrollo.
 
-bash
-uvicorn main:app --reload
 🌐 Despliegue en Render
-Build Command:
+Build Command: pip install -r requirements.txt
 
-bash
-pip install -r requirements.txt
-Start Command:
+Start Command: uvicorn main:app --host=0.0.0.0 --port=10000
 
-bash
-uvicorn main:app --host=0.0.0.0 --port=10000
-Environment Group:
+Variables de entorno configuradas en Render:
 
 DATABASE_URL → cadena de conexión de Clever Cloud.
 
@@ -83,8 +84,9 @@ SECRET_KEY → clave secreta para seguridad.
 
 DEBUG → modo de depuración.
 
-🧪 Ejemplo de Endpoints
+🧪 Endpoints Disponibles
 Escuderías
+
 GET /escuderias/ → Lista todas las escuderías.
 
 GET /escuderias/{id} → Detalle de una escudería.
@@ -92,6 +94,7 @@ GET /escuderias/{id} → Detalle de una escudería.
 POST /escuderias/ → Crear nueva escudería.
 
 Circuitos
+
 GET /circuitos/ → Lista todos los circuitos.
 
 GET /circuitos/{id} → Detalle de un circuito.
@@ -99,6 +102,7 @@ GET /circuitos/{id} → Detalle de un circuito.
 POST /circuitos/ → Crear nuevo circuito.
 
 Tiempos
+
 GET /tiempos/ → Lista todos los tiempos registrados.
 
 GET /tiempos/{id} → Detalle de un tiempo.
@@ -117,13 +121,12 @@ Uso de pools de conexión en SQLAlchemy para evitar fugas.
 
 Separación clara de routers, templates y static.
 
-.gitignore configurado para excluir venv/, __pycache__/ y archivos innecesarios.
+.gitignore configurado para excluir venv, pycache y archivos innecesarios.
 
 Commits limpios y descriptivos para mantener un historial ordenado.
 
 Variables de entorno seguras en Render (sin credenciales en el código).
 
 👨‍💻 Autor
-Yeferson Guaca Desarrollador backend/frontend con experiencia en FastAPI, SQLAlchemy y despliegue en la nube. 📧 Contacto: ydguaca49@ucatolica.edu.co
-
+Yeferson Guaca
 
