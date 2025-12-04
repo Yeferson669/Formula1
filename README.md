@@ -89,23 +89,9 @@ Render (Deployment)
 | GET    | `/tiempos/{id}` | Detalle          |
 | POST   | `/tiempos/`     | Registrar tiempo |
 
-
-## Buenas prácticas implementadas
-
-Arquitectura MVC/MVT
-
-Variables de entorno seguras
-
-Conexiones PostgreSQL con pool
-
-Rutas separadas por módulos
-
-Templates reutilizables
-
-Código limpio y estructurado
-
 ## Autor
 
 Yeferson Guaca
+
 
 
